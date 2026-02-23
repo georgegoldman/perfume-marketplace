@@ -1,0 +1,1 @@
+(models::Product, std::option::Option<std::string::String>)

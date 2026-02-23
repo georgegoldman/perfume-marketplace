@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Merchant {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  shopName      String?
+  logoUrl       String?
+  createdAt     DateTime  @default(now())
+  products      Product[]
+  orders        Order[]
+}
+
+enum ProductType {
+  PERFUME
+  OIL_PERFUME
+  DIFFUSER
+  DEODORANT
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  type        ProductType
+  merchantId  String
+  merchant    Merchant      @relation(fields: [merchantId], references: [id])
+  imageUrl    String?
+  basePrice   Float
+  items       InventoryItem[]
+  createdAt   DateTime      @default(now())
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  sku         String   @unique
+  stockLevel  Int      @default(0)
+  priceAmount Float?   // Override base price if needed
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  merchantId    String
+  merchant      Merchant    @relation(fields: [merchantId], references: [id])
+  customerEmail String
+  totalAmount   Float
+  status        String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderId     String
+  order       Order  @relation(fields: [orderId], references: [id])
+  productId   String
+  quantity    Int
+  priceAtSale Float
+}

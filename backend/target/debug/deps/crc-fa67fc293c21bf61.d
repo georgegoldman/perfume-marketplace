@@ -1,0 +1,12 @@
+/home/goldman/.gemini/antigravity/scratch/perfume-marketplace/backend/target/debug/deps/crc-fa67fc293c21bf61.d: /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/lib.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc128.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc16.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc32.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc64.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc8.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/table.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/util.rs
+
+/home/goldman/.gemini/antigravity/scratch/perfume-marketplace/backend/target/debug/deps/libcrc-fa67fc293c21bf61.rmeta: /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/lib.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc128.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc16.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc32.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc64.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc8.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/table.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/util.rs
+
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/lib.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc128.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc16.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc32.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc64.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/crc8.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/table.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc-3.4.0/src/util.rs:

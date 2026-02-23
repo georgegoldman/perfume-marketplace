@@ -1,27 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Color Palette - Premium & Luxury */
+  --primary-gold: 43 55% 55%;
+  --primary-gold-light: 43 55% 75%;
+  --primary-gold-dark: 43 55% 35%;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  --bg-deep: 220 20% 5%;
+  --bg-card: 220 20% 10%;
+  --bg-glass: 220 20% 10% / 0.7;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  --text-primary: 0 0% 98%;
+  --text-secondary: 220 10% 70%;
+  --text-accent: 43 55% 55%;
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --border-glass: 0 0% 100% / 0.1;
+  --border-gold: 43 55% 55% / 0.3;
+
+  --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -30,13 +26,100 @@ body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: hsl(var(--bg-deep));
+  color: hsl(var(--text-primary));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: hsla(var(--bg-glass));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--border-glass));
+  border-radius: 16px;
+  box-shadow: var(--shadow-lux);
+}
+
+.glass-gold {
+  border: 1px solid hsla(var(--border-gold));
+}
+
+/* Luxury Button */
+.btn-gold {
+  background: hsl(var(--primary-gold));
+  color: hsl(var(--bg-deep));
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+}
+
+.btn-gold:hover {
+  background: hsl(var(--primary-gold-light));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px hsla(var(--primary-gold) / 0.3);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+}
+
+/* Gradient Text */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary-gold-light)), hsl(var(--primary-gold-dark)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--bg-deep));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsla(var(--border-glass));
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(var(--primary-gold) / 0.5);
+}
+
+/* Layout Helpers */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section {
+  padding: 80px 0;
 }
