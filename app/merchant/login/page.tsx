@@ -8,7 +8,7 @@ export default function MerchantLoginPage() {
     return (
         <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-secondary)', padding: '2rem' }}>
             <div style={{ marginBottom: '3rem' }}>
-                <Link href="/" className="serif" style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '0.1em', textDecoration: 'none', color: 'black' }}>SCENT</Link>
+                <Link href="/" className="serif" style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '0.1em', textDecoration: 'none', color: 'black' }}>PARFUM ANTIQUE</Link>
             </div>
             <Suspense fallback={<div className="card" style={{ padding: '3rem', textAlign: 'center' }}>Loading...</div>}>
                 <MerchantLoginForm />

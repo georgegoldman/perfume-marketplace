@@ -232,7 +232,7 @@ export default function InventoryPage() {
                                     <input
                                         required
                                         type="text"
-                                        placeholder="SCENT-001"
+                                        placeholder="PARFUM-001"
                                         className="w-full bg-transparent border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors placeholder:text-[var(--border)]"
                                         value={newProduct.sku}
                                         onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}

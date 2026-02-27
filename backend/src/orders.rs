@@ -5,12 +5,14 @@ use axum::{
     Json,
 };
 use serde::{Deserialize, Serialize};
-use sqlx::SqlitePool;
+use sqlx::{SqlitePool, Row};
 use crate::models::{Order, OrderItem};
 use uuid::Uuid;
 use chrono::{Utc, DateTime};
+use std::str::FromStr;
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateOrderRequest {
     pub merchant_id: String,
     pub customer_email: String,
@@ -18,6 +20,7 @@ pub struct CreateOrderRequest {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateOrderItemRequest {
     pub product_id: String,
     pub quantity: i32,
@@ -76,13 +79,23 @@ pub async fn get_merchant_orders(
     State(pool): State<SqlitePool>,
     Path(merchant_id): Path<String>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let orders: Vec<Order> = sqlx::query_as::<_, Order>(
-        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", totalAmount as "total_amount: f64", status, createdAt as "created_at: DateTime<Utc>" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#
+    let orders: Vec<Order> = sqlx::query(
+        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", totalAmount as "total_amount", status, createdAt as "created_at" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#
     )
     .bind(merchant_id)
     .fetch_all(&pool)
     .await
-    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?
+    .into_iter()
+    .map(|row| Order {
+        id: row.get("id"),
+        merchant_id: row.get("merchant_id"),
+        customer_email: row.get("customer_email"),
+        total_amount: row.get("total_amount"),
+        status: row.get("status"),
+        created_at: row.get("created_at"),
+    })
+    .collect();
 
     let mut result = Vec::new();
     for order in orders {

@@ -2,17 +2,28 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCart } from '@/components/CartContext';
 
 export default function LandingPage() {
+  const { cartCount } = useCart();
   return (
     <main className="min-h-screen bg-[var(--bg-primary)]">
       {/* Header / Nav */}
       <nav className="sticky top-0 bg-[var(--bg-primary)]/90 backdrop-blur-md z-[1000] border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex justify-between items-center">
           <Link href="/" className="font-playfair text-2xl font-bold tracking-widest no-underline text-[var(--text-primary)]">
-            SCENT
+            PARFUM ANTIQUE
           </Link>
           <div className="flex gap-10 items-center">
+            <Link href="/cart" className="relative group no-underline flex items-center gap-2">
+              <span className="text-xl">🛍️</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[var(--text-primary)] text-[var(--bg-primary)] text-[0.6rem] font-bold w-4 h-4 rounded-full flex justify-center items-center font-inter">
+                  {cartCount}
+                </span>
+              )}
+              <span className="hidden md:block uppercase text-[0.7rem] font-bold tracking-[0.2em] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">Cart</span>
+            </Link>
             <Link href="/browse" className="hidden md:block uppercase text-[0.7rem] font-bold tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">
               Discovery
             </Link>
@@ -130,7 +141,6 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 items-start mb-24">
             <div className="lg:col-span-1">
-              <h2 className="font-playfair text-2xl font-bold tracking-widest mb-10 text-[var(--text-primary)]">SCENT</h2>
               <p className="text-[var(--text-secondary)] text-sm leading-relaxed font-light mb-10">
                 Elevating the art of perfumery through a meticulously selected marketplace of independent creators and rare botanical treasures.
               </p>
@@ -171,7 +181,7 @@ export default function LandingPage() {
           </div>
 
           <div className="pt-12 border-t border-[var(--border)] flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-[0.6rem] uppercase tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Scent Marketplace. London / Paris / NY.</p>
+            <p className="text-[0.6rem] uppercase tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Parfum Antique. London / Paris / NY.</p>
             <div className="flex gap-12">
               <Link href="/privacy" className="text-[var(--text-secondary)] text-[0.6rem] uppercase tracking-[0.3em] no-underline hover:text-[var(--text-primary)]">Privacy Policy</Link>
               <Link href="/terms" className="text-[var(--text-secondary)] text-[0.6rem] uppercase tracking-[0.3em] no-underline hover:text-[var(--text-primary)]">Terms of Service</Link>

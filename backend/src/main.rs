@@ -44,6 +44,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/api/health", get(health_check))
+        .route("/api/test", get(|| async { "API is alive" }))
         .route("/api/auth/register", post(auth::register))
         .route("/api/auth/login", post(auth::login))
         .route("/api/products", get(products::list_products))

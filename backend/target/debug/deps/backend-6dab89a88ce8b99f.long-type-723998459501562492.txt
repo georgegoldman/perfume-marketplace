@@ -1,0 +1,49 @@
+DateTime<FixedOffset>
+DateTime<Local>
+argon2::Algorithm
+argon2::password_hash::Output
+axum::http::StatusCode
+deranged::RangedI128<MIN, MAX>
+deranged::RangedI16<MIN, MAX>
+deranged::RangedI32<MIN, MAX>
+deranged::RangedI64<MIN, MAX>
+deranged::RangedI8<MIN, MAX>
+deranged::RangedIsize<MIN, MAX>
+deranged::RangedU128<MIN, MAX>
+deranged::RangedU16<MIN, MAX>
+deranged::RangedU32<MIN, MAX>
+deranged::RangedU64<MIN, MAX>
+deranged::RangedU8<MIN, MAX>
+deranged::RangedUsize<MIN, MAX>
+httpdate::date::HttpDate
+icu_locale_core::extensions::private::other::Subtag
+icu_locale_core::extensions::transform::key::Key
+icu_locale_core::extensions::unicode::attribute::Attribute
+icu_locale_core::extensions::unicode::key::Key
+icu_locale_core::extensions::unicode::subdivision::SubdivisionId
+icu_locale_core::extensions::unicode::subdivision::SubdivisionSuffix
+icu_locale_core::subtags::Subtag
+icu_locale_core::subtags::language::Language
+icu_locale_core::subtags::region::Region
+icu_locale_core::subtags::script::Script
+icu_locale_core::subtags::variant::Variant
+jsonwebtoken::Algorithm
+log::LevelFilter
+num_bigint::bigint::BigInt
+num_bigint::biguint::BigUint
+openssl::cipher_ctx::_::InternalBitFlags
+openssl::cms::_::InternalBitFlags
+openssl::ocsp::_::InternalBitFlags
+openssl::pkcs7::_::InternalBitFlags
+openssl::ssl::_::InternalBitFlags
+openssl::x509::verify::_::InternalBitFlags
+serde_json::Map<std::string::String, JsonValue>
+serde_json::Number
+std::net::SocketAddr
+std::string::String
+time::month::Month
+time::weekday::Weekday
+tinystr::ascii::TinyAsciiStr<N>
+tracing_core::metadata::Level
+tracing_core::metadata::LevelFilter
+uuid::fmt::Simple

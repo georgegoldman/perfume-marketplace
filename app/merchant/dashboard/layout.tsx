@@ -33,7 +33,7 @@ export default function DashboardLayout({
 
     if (!merchant) return (
         <div className="min-h-screen flex justify-center items-center bg-[var(--bg-secondary)] text-[var(--text-primary)]">
-             <div className="w-12 h-[1px] bg-[var(--text-primary)] animate-pulse"></div>
+            <div className="w-12 h-[1px] bg-[var(--text-primary)] animate-pulse"></div>
         </div>
     );
 
@@ -50,7 +50,7 @@ export default function DashboardLayout({
                 {/* Sidebar - Desktop */}
                 <aside className="hidden lg:flex w-72 bg-[var(--bg-primary)] border-r border-[var(--border)] flex-col sticky top-0 h-screen z-50">
                     <div className="p-10">
-                        <Link href="/" className="font-playfair text-2xl font-bold tracking-widest no-underline text-inherit">SCENT</Link>
+                        <Link href="/" className="font-playfair text-2xl font-bold tracking-widest no-underline text-inherit">PARFUM ANTIQUE</Link>
                         <div className="mt-4 flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500"></div>
                             <p className="uppercase text-[0.6rem] font-bold tracking-widest text-[var(--text-secondary)]">{merchant.shopName || 'Boutique'}</p>
@@ -62,11 +62,10 @@ export default function DashboardLayout({
                             <Link
                                 key={item.path}
                                 href={item.path}
-                                className={`flex items-center gap-4 px-6 py-4 uppercase text-[0.65rem] font-black tracking-widest no-underline transition-all duration-200 border-l-2 ${
-                                    pathname === item.path 
-                                    ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--text-primary)]' 
-                                    : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]/50'
-                                }`}
+                                className={`flex items-center gap-4 px-6 py-4 uppercase text-[0.65rem] font-black tracking-widest no-underline transition-all duration-200 border-l-2 ${pathname === item.path
+                                        ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--text-primary)]'
+                                        : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]/50'
+                                    }`}
                             >
                                 <span className="text-lg">{item.icon}</span>
                                 {item.name}
@@ -102,9 +101,8 @@ export default function DashboardLayout({
                     <Link
                         key={item.path}
                         href={item.path}
-                        className={`flex flex-col items-center gap-1.5 no-underline transition-all ${
-                            pathname === item.path ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] opacity-50'
-                        }`}
+                        className={`flex flex-col items-center gap-1.5 no-underline transition-all ${pathname === item.path ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] opacity-50'
+                            }`}
                     >
                         <span className="text-xl">{item.icon}</span>
                         <span className="uppercase text-[0.55rem] font-black tracking-tighter">{item.name}</span>

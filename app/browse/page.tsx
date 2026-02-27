@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api-client';
 import { Product } from '@/lib/types';
+import { useCart } from '@/components/CartContext';
 
 export default function BrowsePage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('ALL');
+    const { addToCart, cartCount } = useCart();
 
     const categories = [
         { id: 'ALL', name: 'All' },
@@ -41,8 +43,19 @@ export default function BrowsePage() {
             {/* Minimal Nav */}
             <nav className="sticky top-0 bg-[var(--bg-primary)]/90 backdrop-blur-md z-[1000] border-b border-[var(--border)]">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex justify-between items-center">
-                    <Link href="/" className="font-playfair text-xl font-bold tracking-widest no-underline text-[var(--text-primary)]">SCENT</Link>
-                    <Link href="/merchant/login" className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">Portal</Link>
+                    <Link href="/" className="font-playfair text-xl font-bold tracking-widest no-underline text-[var(--text-primary)]">PARFUM ANTIQUE</Link>
+                    <div className="flex items-center gap-8">
+                        <Link href="/cart" className="relative group no-underline flex items-center gap-2">
+                            <span className="text-xl">🛍️</span>
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-[var(--text-primary)] text-[var(--bg-primary)] text-[0.6rem] font-bold w-4 h-4 rounded-full flex justify-center items-center">
+                                    {cartCount}
+                                </span>
+                            )}
+                            <span className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">Cart</span>
+                        </Link>
+                        <Link href="/merchant/login" className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">Portal</Link>
+                    </div>
                 </div>
             </nav>
 
@@ -57,8 +70,8 @@ export default function BrowsePage() {
                                     key={cat.id}
                                     onClick={() => setFilter(cat.id)}
                                     className={`uppercase text-[0.65rem] font-black tracking-[0.3em] pb-4 transition-all whitespace-nowrap border-b-2 ${filter === cat.id
-                                            ? 'text-[var(--text-primary)] border-[var(--text-primary)]'
-                                            : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
+                                        ? 'text-[var(--text-primary)] border-[var(--text-primary)]'
+                                        : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
                                         }`}
                                 >
                                     {cat.name}
@@ -112,12 +125,20 @@ export default function BrowsePage() {
                                         Artistry by {product.merchant?.shopName || 'Scent Artistry'}
                                     </p>
 
-                                    <Link
-                                        href={`/product/${product.id}`}
-                                        className="mt-auto px-6 py-3 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] text-center hover:bg-[var(--text-primary)] hover:text-[var(--bg-primary)] transition-all duration-300"
-                                    >
-                                        View Essence
-                                    </Link>
+                                    <div className="flex gap-4 mt-auto">
+                                        <Link
+                                            href={`/product/${product.id}`}
+                                            className="flex-1 px-4 py-3 border border-[var(--border)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:border-[var(--text-primary)] transition-all duration-300 no-underline text-inherit"
+                                        >
+                                            Details
+                                        </Link>
+                                        <button
+                                            onClick={() => addToCart(product)}
+                                            className="flex-1 px-4 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] border border-[var(--text-primary)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:opacity-90 transition-all duration-300"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -127,7 +148,7 @@ export default function BrowsePage() {
 
             <footer className="py-20 border-t border-[var(--border)]">
                 <div className="max-w-7xl mx-auto px-6 text-center">
-                    <p className="uppercase text-[0.6rem] tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Scent Marketplace</p>
+                    <p className="uppercase text-[0.6rem] tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Parfum Antique</p>
                 </div>
             </footer>
         </main>

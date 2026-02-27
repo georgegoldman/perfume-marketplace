@@ -3,6 +3,7 @@ use sqlx::FromRow;
 use chrono::{DateTime, Utc};
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct Merchant {
     pub id: String,
     pub name: String,
@@ -23,11 +24,26 @@ pub enum ProductType {
     Deodorant,
 }
 
+impl std::str::FromStr for ProductType {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "PERFUME" => Ok(ProductType::Perfume),
+            "OIL_PERFUME" | "OILPERFUME" => Ok(ProductType::OilPerfume),
+            "DIFFUSER" => Ok(ProductType::Diffuser),
+            "DEODORANT" => Ok(ProductType::Deodorant),
+            _ => Err(format!("Unknown product type: {}", s)),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Product {
     pub id: String,
     pub name: String,
     pub description: Option<String>,
+    #[serde(rename = "type")]
     pub product_type: ProductType,
     pub merchant_id: String,
     pub image_url: Option<String>,
@@ -36,6 +52,7 @@ pub struct Product {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct InventoryItem {
     pub id: String,
     pub product_id: String,
@@ -45,6 +62,7 @@ pub struct InventoryItem {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct Order {
     pub id: String,
     pub merchant_id: String,
@@ -55,6 +73,7 @@ pub struct Order {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct OrderItem {
     pub id: String,
     pub order_id: String,

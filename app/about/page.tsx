@@ -1,45 +1,77 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AboutPage() {
     return (
-        <main>
-            <nav>
-                <div className="container" style={{ height: '80px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Link href="/" className="serif" style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.1em', textDecoration: 'none', color: 'inherit' }}>SCENT</Link>
-                    <Link href="/browse" className="uppercase" style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Back to Collection</Link>
+        <main className="min-h-screen bg-[var(--bg-primary)]">
+            {/* Standard Navigation */}
+            <nav className="sticky top-0 bg-[var(--bg-primary)]/90 backdrop-blur-md z-[1000] border-b border-[var(--border)]">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex justify-between items-center">
+                    <Link href="/" className="font-playfair text-2xl font-bold tracking-widest no-underline text-[var(--text-primary)]">
+                        PARFUM ANTIQUE
+                    </Link>
+                    <Link href="/browse" className="uppercase text-[0.7rem] font-bold tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline">
+                        Back to Collection
+                    </Link>
                 </div>
             </nav>
 
-            <section style={{ padding: '120px 0' }}>
-                <div className="container" style={{ maxWidth: '800px', textAlign: 'center' }}>
-                    <span className="uppercase text-mute" style={{ fontSize: '0.75rem', marginBottom: '1.5rem', display: 'block', letterSpacing: '0.2rem' }}>Our Story</span>
-                    <h1 className="serif" style={{ fontSize: '3.5rem', lineHeight: 1.1, marginBottom: '3rem', fontWeight: 400 }}>
-                        Crafting Immortality <br />
-                        <span style={{ fontStyle: 'italic' }}>Captured in a Bottle</span>
-                    </h1>
+            {/* Hero Section */}
+            <section className="relative py-24 md:py-40">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                        <div className="order-2 lg:order-1">
+                            <span className="inline-block uppercase text-[var(--text-secondary)] text-[0.7rem] tracking-[0.4em] mb-8">
+                                Our Story
+                            </span>
+                            <h1 className="font-playfair text-5xl md:text-7xl mb-12 leading-[1.1] font-normal tracking-tight">
+                                Crafting Immortality <br />
+                                <span className="italic">Captured in a Bottle</span>
+                            </h1>
+                            <div className="w-16 h-[1px] bg-[var(--text-primary)] mb-12"></div>
 
-                    <div style={{ width: '40px', height: '1px', background: 'var(--border)', margin: '0 auto 3rem' }}></div>
+                            <div className="space-y-8 text-[var(--text-secondary)] text-lg leading-relaxed font-light max-w-xl">
+                                <p>
+                                    Parfum Antique was born from a singular vision: to strip away the noise of the modern world and return to the pure, elemental power of fragrance. We believe that a scent is more than just a preference—it is a narrative, a memory, and a quiet statement of being.
+                                </p>
+                                <p>
+                                    Our curated collection brings together the work of independent artisans and master perfumers who share our commitment to minimalism and excellence. By removing the gloss of traditional luxury, we reveal the raw beauty of the ingredients themselves.
+                                </p>
+                            </div>
 
-                    <p className="text-mute" style={{ fontSize: '1.125rem', lineHeight: 2, marginBottom: '3rem', fontWeight: 300, textAlign: 'justify' }}>
-                        Scent Marketplace was born from a singular vision: to strip away the noise of the modern world and return to the pure, elemental power of fragrance. We believe that a scent is more than just a preference—it is a narrative, a memory, and a quiet statement of being.
-                    </p>
+                            <div className="mt-16 flex flex-col sm:flex-row gap-4">
+                                <Link href="/browse" className="px-10 py-5 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-bold tracking-widest hover:opacity-90 transition-all text-center">
+                                    Explore the Collection
+                                </Link>
+                                <Link href="/merchant/register" className="px-10 py-5 border border-[var(--border)] uppercase text-[0.7rem] font-bold tracking-widest hover:border-[var(--text-primary)] transition-all text-center">
+                                    Join the Guild
+                                </Link>
+                            </div>
+                        </div>
 
-                    <p className="text-mute" style={{ fontSize: '1.125rem', lineHeight: 2, marginBottom: '3rem', fontWeight: 300, textAlign: 'justify' }}>
-                        Our curated collection brings together the work of independent artisans and master perfumers who share our commitment to minimalism and excellence. By removing the gloss of traditional luxury, we reveal the raw beauty of the ingredients themselves.
-                    </p>
-
-                    <div style={{ marginTop: '5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                        <Link href="/browse" className="btn btn-primary uppercase" style={{ padding: '16px 40px' }}>Explore Collection</Link>
-                        <Link href="/merchant/register" className="btn btn-outline uppercase" style={{ padding: '16px 40px' }}>Join the Guild</Link>
+                        <div className="order-1 lg:order-2">
+                            <div className="relative aspect-[4/5] bg-[var(--bg-secondary)] border border-[var(--border)] overflow-hidden">
+                                <Image
+                                    src="/about-hero.png"
+                                    alt="Artisanal Fragrance"
+                                    fill
+                                    className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                                    priority
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <footer style={{ padding: '60px 0', borderTop: '1px solid var(--border)', marginTop: '80px' }}>
-                <div className="container" style={{ textAlign: 'center' }}>
-                    <p className="uppercase text-mute" style={{ fontSize: '0.7rem' }}>© 2026 Scent Marketplace</p>
+            {/* Footer */}
+            <footer className="py-20 border-t border-[var(--border)] bg-[var(--bg-secondary)]">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <p className="text-[0.6rem] uppercase tracking-[0.4em] text-[var(--text-secondary)] font-medium">
+                        © 2026 Parfum Antique. London / Paris / NY.
+                    </p>
                 </div>
             </footer>
         </main>

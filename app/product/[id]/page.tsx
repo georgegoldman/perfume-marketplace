@@ -6,11 +6,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api-client';
 import { Product } from '@/lib/types';
+import { useCart } from '@/components/CartContext';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
+    const { addToCart, cartCount } = useCart();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -48,11 +50,22 @@ export default function ProductDetailPage() {
         <main className="min-h-screen bg-[var(--bg-primary)]">
             <nav className="border-b border-[var(--border)]">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex justify-between items-center">
-                    <Link href="/" className="font-playfair text-xl font-bold tracking-widest no-underline text-[var(--text-primary)]">SCENT</Link>
-                    <Link href="/browse" className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">
-                        <span className="md:inline hidden">Browse Collection</span>
-                        <span className="md:hidden inline">Back</span>
-                    </Link>
+                    <Link href="/" className="font-playfair text-xl font-bold tracking-widest no-underline text-[var(--text-primary)]">PARFUM ANTIQUE</Link>
+                    <div className="flex items-center gap-8">
+                        <Link href="/cart" className="relative group no-underline flex items-center gap-2">
+                            <span className="text-xl">🛍️</span>
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-[var(--text-primary)] text-[var(--bg-primary)] text-[0.6rem] font-bold w-4 h-4 rounded-full flex justify-center items-center">
+                                    {cartCount}
+                                </span>
+                            )}
+                            <span className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">Cart</span>
+                        </Link>
+                        <Link href="/browse" className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">
+                            <span className="md:inline hidden">Browse Collection</span>
+                            <span className="md:hidden inline">Back</span>
+                        </Link>
+                    </div>
                 </div>
             </nav>
 
@@ -95,7 +108,10 @@ export default function ProductDetailPage() {
                             </p>
 
                             <div className="flex flex-col gap-6 mb-20">
-                                <button className="w-full py-6 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-bold tracking-[0.3em] hover:opacity-90 transition-all shadow-xl">
+                                <button
+                                    onClick={() => product && addToCart(product)}
+                                    className="w-full py-6 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-bold tracking-[0.3em] hover:opacity-90 transition-all shadow-xl"
+                                >
                                     Add to Selection
                                 </button>
                                 <div className="flex justify-center items-center gap-4 text-[0.6rem] text-[var(--text-secondary)] uppercase tracking-[0.2em] font-bold opacity-60">
@@ -125,7 +141,7 @@ export default function ProductDetailPage() {
 
             <footer className="py-20 border-t border-[var(--border)]">
                 <div className="max-w-7xl mx-auto px-6 text-center">
-                    <p className="uppercase text-[0.6rem] tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Scent Marketplace</p>
+                    <p className="uppercase text-[0.6rem] tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Parfum Antique</p>
                 </div>
             </footer>
         </main>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { CartProvider } from "@/components/CartContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Scent Marketplace | Premium Fragrances",
+  title: "Parfum Antique | Premium Fragrances",
   description: "A luxury marketplace for perfumes, oils, diffusers, and deodorants.",
 };
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          {children}
+          <CartProvider>
+            {children}
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>
