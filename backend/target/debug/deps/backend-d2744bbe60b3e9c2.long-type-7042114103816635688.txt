@@ -1,0 +1,18 @@
+models::Product
+models::Product: sqlx::Decode<'_, _>
+sqlx::Decode<'a, sqlx::Any>
+&'r JsonRawValue
+sqlx::Decode<'r, DB>
+sqlx::Decode<'r, Sqlite>
+sqlx::Decode<'r, sqlx::Any>
+sqlx::Decode<'_, Sqlite>
+DateTime<FixedOffset>
+DateTime<Local>
+sqlx::types::Json<T>
+sqlx::types::Text<T>
+std::option::Option<T>
+std::string::String
+(models::Product, std::option::Option<std::string::String>)
+for<'r> FromRow<'r, _>
+models::Product: Type<_>
+Type<sqlx::Any>

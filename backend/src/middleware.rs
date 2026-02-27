@@ -7,6 +7,7 @@ use axum::{
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
+use std::env;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
@@ -38,7 +39,7 @@ pub async fn auth_middleware(
 
     let token_data = decode::<Claims>(
         token,
-        &DecodingKey::from_secret("secret".as_ref()), // Replace with env var
+        &DecodingKey::from_secret(env::var("JWT_SECRET").expect("JWT_SECRET must be set").as_ref()),
         &Validation::default(),
     )
     .map_err(|_| StatusCode::UNAUTHORIZED)?;

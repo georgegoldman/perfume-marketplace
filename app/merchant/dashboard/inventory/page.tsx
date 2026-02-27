@@ -63,102 +63,190 @@ export default function InventoryPage() {
     };
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+        <div className="space-y-12">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-10">
                 <div>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Inventory <span className="text-gradient">Management</span></h2>
-                    <p style={{ color: 'hsl(var(--text-secondary))' }}>Manage your collection of unique scents.</p>
+                    <h2 className="serif text-4xl md:text-5xl mb-2 font-normal text-[var(--text-primary)]">Inventory</h2>
+                    <p className="text-mute text-sm md:text-base">Manage your curated collection of olfactory treasures.</p>
                 </div>
-                <button className="btn-gold" onClick={() => setShowAddModal(true)}>+ Add New Product</button>
+                <button
+                    className="px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:opacity-90 transition-all shadow-lg"
+                    onClick={() => setShowAddModal(true)}
+                >
+                    + New Essence
+                </button>
             </div>
 
-            <div className="glass" style={{ padding: '0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid hsla(var(--border-glass))' }}>
-                            <th style={{ padding: '1.5rem', fontSize: '0.8rem', fontWeight: 600, color: 'hsl(var(--text-secondary))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Product</th>
-                            <th style={{ padding: '1.5rem', fontSize: '0.8rem', fontWeight: 600, color: 'hsl(var(--text-secondary))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Type</th>
-                            <th style={{ padding: '1.5rem', fontSize: '0.8rem', fontWeight: 600, color: 'hsl(var(--text-secondary))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Base Price</th>
-                            <th style={{ padding: '1.5rem', fontSize: '0.8rem', fontWeight: 600, color: 'hsl(var(--text-secondary))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Stock</th>
-                            <th style={{ padding: '1.5rem', fontSize: '0.8rem', fontWeight: 600, color: 'hsl(var(--text-secondary))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={5} style={{ padding: '4rem', textAlign: 'center', color: 'hsl(var(--text-secondary))' }}>Loading inventory...</td></tr>
-                        ) : products.length === 0 ? (
-                            <tr><td colSpan={5} style={{ padding: '4rem', textAlign: 'center', color: 'hsl(var(--text-secondary))' }}>No products found. Add your first item!</td></tr>
-                        ) : (
-                            products.map((product) => (
-                                <tr key={product.id} style={{ borderBottom: '1px solid hsla(var(--border-glass))', transition: 'background 0.2s ease' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                                    <td style={{ padding: '1.5rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                            <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2rem' }}>💎</div>
-                                            <div>
-                                                <p style={{ fontWeight: 600 }}>{product.name}</p>
-                                                <p style={{ fontSize: '0.75rem', color: 'hsl(var(--text-secondary))' }}>{product.items?.[0]?.sku || 'No SKU'}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '1.5rem' }}><span style={{ fontSize: '0.75rem', fontWeight: 600, background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '100px' }}>{product.type}</span></td>
-                                    <td style={{ padding: '1.5rem' }}>${product.basePrice.toFixed(2)}</td>
-                                    <td style={{ padding: '1.5rem' }}>
-                                        <span style={{ color: (product.items?.[0]?.stockLevel || 0) < 5 ? '#ff4444' : 'inherit' }}>
-                                            {product.items?.[0]?.stockLevel || 0} units
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1.5rem' }}>
-                                        <button style={{ background: 'transparent', border: 'none', color: 'hsl(var(--primary-gold))', cursor: 'pointer', fontSize: '0.9rem', marginRight: '1rem' }}>Edit</button>
-                                        <button style={{ background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer', fontSize: '0.9rem' }}>Delete</button>
+            <div className="card !p-0 overflow-hidden border border-[var(--border)] bg-[var(--bg-primary)]">
+                <div className="overflow-x-auto no-scrollbar">
+                    <table className="w-full min-w-[800px] border-collapse text-left">
+                        <thead>
+                            <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border)]">
+                                <th className="uppercase p-6 text-[0.6rem] font-black text-mute tracking-[0.2em]">Product</th>
+                                <th className="uppercase p-6 text-[0.6rem] font-black text-mute tracking-[0.2em]">Type</th>
+                                <th className="uppercase p-6 text-[0.6rem] font-black text-mute tracking-[0.2em]">Price</th>
+                                <th className="uppercase p-6 text-[0.6rem] font-black text-mute tracking-[0.2em]">Stock</th>
+                                <th className="uppercase p-6 text-[0.6rem] font-black text-mute tracking-[0.2em] text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[var(--border)]">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={5} className="p-20 text-center text-mute uppercase text-[0.65rem] font-bold tracking-[0.2em] animate-pulse">
+                                        Seeking database records...
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : products.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="p-20 text-center">
+                                        <p className="serif text-2xl text-mute italic mb-2">The inventory is currently empty.</p>
+                                        <p className="text-mute uppercase text-[0.55rem] font-bold tracking-[0.1em]">Add your first creation to begin.</p>
+                                    </td>
+                                </tr>
+                            ) : (
+                                products.map((product) => (
+                                    <tr key={product.id} className="hover:bg-[var(--bg-secondary)]/50 transition-colors group">
+                                        <td className="p-6">
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-12 h-12 border border-[var(--border)] flex justify-center items-center text-xl grayscale group-hover:grayscale-0 transition-all bg-[var(--bg-secondary)]">
+                                                    {product.type === 'PERFUME' ? '🧪' : '✨'}
+                                                </div>
+                                                <div>
+                                                    <p className="serif text-lg font-normal text-[var(--text-primary)]">{product.name}</p>
+                                                    <p className="text-[0.55rem] text-mute uppercase font-black tracking-widest">{product.items?.[0]?.sku || 'NO-SKU'}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="p-6">
+                                            <span className="uppercase text-[0.55rem] font-black border border-[var(--border)] px-3 py-1 bg-[var(--bg-primary)] tracking-widest text-[var(--text-primary)]">
+                                                {product.type.replace('_', ' ')}
+                                            </span>
+                                        </td>
+                                        <td className="p-6 font-medium text-[var(--text-primary)]">
+                                            ${product.basePrice.toFixed(2)}
+                                        </td>
+                                        <td className="p-6">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${(product.items?.[0]?.stockLevel || 0) < 5 ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`}></div>
+                                                <span className={`uppercase text-[0.65rem] font-bold tracking-tight ${(product.items?.[0]?.stockLevel || 0) < 5 ? 'text-red-500' : 'text-mute'}`}>
+                                                    {product.items?.[0]?.stockLevel || 0} Units
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="p-6 text-right">
+                                            <div className="flex justify-end gap-6">
+                                                <button className="uppercase text-[0.6rem] font-black tracking-widest text-[var(--text-primary)] hover:opacity-100 opacity-40 transition-opacity">Edit</button>
+                                                <button className="uppercase text-[0.6rem] font-black tracking-widest text-red-500 hover:opacity-100 opacity-40 transition-opacity">Delete</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Add Product Modal */}
             {showAddModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 2000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div className="glass glass-gold" style={{ width: '90%', maxWidth: '600px', padding: '3rem', position: 'relative' }}>
-                        <button onClick={() => setShowAddModal(false)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.5rem' }}>×</button>
-                        <h3 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '2rem' }}>Add New Product</h3>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[2000] flex justify-center items-center p-6 overflow-y-auto">
+                    <div className="w-full max-w-xl bg-[var(--bg-primary)] border border-[var(--border)] shadow-2xl relative p-10 md:p-14 animate-in fade-in zoom-in duration-300">
+                        <button
+                            onClick={() => setShowAddModal(false)}
+                            className="absolute top-6 right-6 text-2xl text-[var(--text-primary)] hover:rotate-90 transition-transform duration-300"
+                        >
+                            ×
+                        </button>
 
-                        {error && <div style={{ background: 'rgba(255,0,0,0.1)', color: '#ff4444', padding: '0.8rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.85rem' }}>{error}</div>}
+                        <header className="text-center mb-12">
+                            <span className="uppercase text-[0.6rem] text-mute font-black tracking-[0.4em] mb-4 block">Archive Addition</span>
+                            <h3 className="serif text-4xl font-normal text-[var(--text-primary)]">New Essence</h3>
+                        </header>
 
-                        <form onSubmit={handleCreateProduct} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <div style={{ gridColumn: 'span 2' }}>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>Product Name</label>
-                                <input required type="text" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white' }} value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} />
+                        {error && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 mb-8 text-[0.7rem] uppercase font-bold tracking-widest text-center">
+                                {error}
                             </div>
-                            <div style={{ gridColumn: 'span 2' }}>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>Description</label>
-                                <textarea style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white', minHeight: '80px' }} value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
+                        )}
+
+                        <form onSubmit={handleCreateProduct} className="space-y-8">
+                            <div className="space-y-2">
+                                <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Product Name</label>
+                                <input
+                                    required
+                                    type="text"
+                                    className="w-full bg-transparent border-b border-[var(--border)] py-3 text-lg font-light outline-none focus:border-[var(--text-primary)] transition-colors placeholder:text-[var(--border)]"
+                                    placeholder="Enter creation name..."
+                                    value={newProduct.name}
+                                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                />
                             </div>
-                            <div>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>Type</label>
-                                <select style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white' }} value={newProduct.type} onChange={(e) => setNewProduct({ ...newProduct, type: e.target.value })}>
-                                    <option value="PERFUME">Perfume</option>
-                                    <option value="OIL_PERFUME">Oil Perfume</option>
-                                    <option value="DIFFUSER">Diffuser</option>
-                                    <option value="DEODORANT">Deodorant</option>
-                                </select>
+
+                            <div className="space-y-2">
+                                <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Description</label>
+                                <textarea
+                                    className="w-full bg-transparent border border-[var(--border)] p-4 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors min-h-[100px] resize-none"
+                                    placeholder="Describe the olfactory journey..."
+                                    value={newProduct.description}
+                                    onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                />
                             </div>
-                            <div>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>Base Price ($)</label>
-                                <input required type="number" step="0.01" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white' }} value={newProduct.basePrice} onChange={(e) => setNewProduct({ ...newProduct, basePrice: e.target.value })} />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-2">
+                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Type</label>
+                                    <select
+                                        className="w-full bg-[var(--bg-primary)] border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors appearance-none cursor-pointer"
+                                        value={newProduct.type}
+                                        onChange={(e) => setNewProduct({ ...newProduct, type: e.target.value })}
+                                    >
+                                        <option value="PERFUME">Fine Parfum</option>
+                                        <option value="OIL_PERFUME">Botanical Oil</option>
+                                        <option value="DIFFUSER">Ambient Scent</option>
+                                        <option value="DEODORANT">Personal Essence</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Base Price ($)</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        step="0.01"
+                                        className="w-full bg-transparent border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors"
+                                        value={newProduct.basePrice}
+                                        onChange={(e) => setNewProduct({ ...newProduct, basePrice: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Stock Count</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        className="w-full bg-transparent border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors"
+                                        value={newProduct.stockLevel}
+                                        onChange={(e) => setNewProduct({ ...newProduct, stockLevel: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Reference SKU</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        placeholder="SCENT-001"
+                                        className="w-full bg-transparent border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors placeholder:text-[var(--border)]"
+                                        value={newProduct.sku}
+                                        onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>Initial Stock</label>
-                                <input required type="number" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white' }} value={newProduct.stockLevel} onChange={(e) => setNewProduct({ ...newProduct, stockLevel: e.target.value })} />
-                            </div>
-                            <div>
-                                <label style={{ display: 'block', fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.5rem' }}>SKU</label>
-                                <input required type="text" placeholder="e.g. LUX-PERF-01" style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white' }} value={newProduct.sku} onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })} />
-                            </div>
-                            <div style={{ gridColumn: 'span 2', marginTop: '1rem' }}>
-                                <button type="submit" className="btn-gold" style={{ width: '100%', height: '50px' }}>Create Product</button>
+
+                            <div className="pt-6">
+                                <button
+                                    type="submit"
+                                    className="w-full py-5 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-black tracking-[0.3em] hover:opacity-90 transition-all shadow-xl"
+                                >
+                                    Complete Addition
+                                </button>
                             </div>
                         </form>
                     </div>

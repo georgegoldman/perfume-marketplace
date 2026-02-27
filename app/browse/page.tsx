@@ -12,11 +12,11 @@ export default function BrowsePage() {
     const [filter, setFilter] = useState('ALL');
 
     const categories = [
-        { id: 'ALL', name: 'All Scents' },
-        { id: 'PERFUME', name: 'Perfumes' },
+        { id: 'ALL', name: 'All' },
+        { id: 'PERFUME', name: 'Parfums' },
         { id: 'OIL_PERFUME', name: 'Oils' },
         { id: 'DIFFUSER', name: 'Diffusers' },
-        { id: 'DEODORANT', name: 'Deodorants' },
+        { id: 'DEODORANT', name: 'Essences' },
     ];
 
     const fetchProducts = useCallback(async () => {
@@ -37,84 +37,98 @@ export default function BrowsePage() {
     }, [fetchProducts]);
 
     return (
-        <main style={{ minHeight: '100vh', background: 'hsl(var(--bg-deep))', color: 'white' }}>
-            {/* Navbar Shorthand */}
-            <nav className="glass" style={{ margin: '1rem auto', width: '90%', maxWidth: '1200px', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Link href="/" className="text-gradient" style={{ fontSize: '1.2rem', fontWeight: 700 }}>SCENT</Link>
-                <Link href="/merchant/login" style={{ fontSize: '0.8rem', color: 'hsl(var(--text-secondary))' }}>Merchant Portal</Link>
+        <main className="min-h-screen bg-[var(--bg-primary)]">
+            {/* Minimal Nav */}
+            <nav className="sticky top-0 bg-[var(--bg-primary)]/90 backdrop-blur-md z-[1000] border-b border-[var(--border)]">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex justify-between items-center">
+                    <Link href="/" className="font-playfair text-xl font-bold tracking-widest no-underline text-[var(--text-primary)]">SCENT</Link>
+                    <Link href="/merchant/login" className="uppercase text-[0.6rem] font-black tracking-[0.3em] text-[var(--text-secondary)] hover:text-[var(--text-primary)] no-underline">Portal</Link>
+                </div>
             </nav>
 
-            <section className="container">
-                <header style={{ marginBottom: '4rem' }}>
-                    <h1 style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>Browse our <span className="text-gradient">Collections</span></h1>
+            <section className="py-16 md:py-24">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <header className="mb-20 text-center md:text-left">
+                        <h1 className="font-playfair text-5xl md:text-7xl mb-8 font-normal">The Archive</h1>
 
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        {categories.map((cat) => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setFilter(cat.id)}
-                                style={{
-                                    padding: '8px 20px',
-                                    borderRadius: '100px',
-                                    background: filter === cat.id ? 'hsl(var(--primary-gold))' : 'rgba(255,255,255,0.05)',
-                                    color: filter === cat.id ? 'hsl(var(--bg-deep))' : 'white',
-                                    border: '1px solid hsla(var(--border-glass))',
-                                    cursor: 'pointer',
-                                    fontWeight: 600,
-                                    fontSize: '0.85rem',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
-                    </div>
-                </header>
+                        <div className="flex gap-8 md:gap-12 overflow-x-auto no-scrollbar border-b border-[var(--border)] pb-4 focus:outline-none">
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setFilter(cat.id)}
+                                    className={`uppercase text-[0.65rem] font-black tracking-[0.3em] pb-4 transition-all whitespace-nowrap border-b-2 ${filter === cat.id
+                                            ? 'text-[var(--text-primary)] border-[var(--text-primary)]'
+                                            : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)]'
+                                        }`}
+                                >
+                                    {cat.name}
+                                </button>
+                            ))}
+                        </div>
+                    </header>
 
-                {loading ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="glass" style={{ height: '400px', opacity: 0.3 }}></div>
-                        ))}
-                    </div>
-                ) : products.length === 0 ? (
-                    <div style={{ padding: '8rem 0', textAlign: 'center', opacity: 0.5 }}>
-                        <p style={{ fontSize: '1.2rem' }}>No scents found in this collection.</p>
-                    </div>
-                ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
-                        {products.map((product) => (
-                            <div key={product.id} className="glass" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s ease' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-8px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
-                                <div style={{ height: '240px', background: 'linear-gradient(45deg, #111, #222)', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
-                                    {product.imageUrl ? (
-                                        <Image src={product.imageUrl} alt={product.name} fill style={{ objectFit: 'cover' }} />
-                                    ) : (
-                                        <span style={{ fontSize: '3rem', opacity: 0.3 }}>💎</span>
-                                    )}
-                                    <span style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                        {product.type.replace('_', ' ')}
-                                    </span>
+                    {loading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="animate-pulse">
+                                    <div className="aspect-[3/4] bg-[var(--bg-secondary)] border border-[var(--border)] mb-6"></div>
+                                    <div className="h-4 bg-[var(--bg-secondary)] w-2/3 mb-4"></div>
+                                    <div className="h-3 bg-[var(--bg-secondary)] w-1/3"></div>
                                 </div>
-                                <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>{product.name}</h3>
-                                        <span style={{ color: 'hsl(var(--primary-gold))', fontWeight: 700 }}>${product.basePrice.toFixed(2)}</span>
+                            ))}
+                        </div>
+                    ) : products.length === 0 ? (
+                        <div className="py-40 text-center">
+                            <p className="font-playfair text-[var(--text-secondary)] text-2xl font-light italic">The selection is currently unattainable.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+                            {products.map((product) => (
+                                <div key={product.id} className="group relative flex flex-col">
+                                    <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden border border-[var(--border)] mb-6">
+                                        {product.imageUrl ? (
+                                            <Image
+                                                src={product.imageUrl}
+                                                alt={product.name}
+                                                fill
+                                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex justify-center items-center opacity-10">
+                                                <span className="text-6xl">{product.type === 'PERFUME' ? '🧪' : '✨'}</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute top-4 left-4 bg-[var(--bg-primary)] px-3 py-1 text-[0.55rem] font-black uppercase tracking-[0.2em] border border-[var(--border)]">
+                                            {product.type.replace('_', ' ')}
+                                        </div>
                                     </div>
-                                    <p style={{ fontSize: '0.8rem', color: 'hsl(var(--text-secondary))', marginBottom: '1rem' }}>by {product.merchant?.shopName || 'Luxury Boutique'}</p>
 
-                                    <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem' }}>
-                                        <button className="btn-gold" style={{ flex: 1, padding: '10px', fontSize: '0.75rem' }}>View Details</button>
-                                        <button style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid hsla(var(--border-glass))', borderRadius: '8px', color: 'white', cursor: 'pointer' }}>🛒</button>
+                                    <div className="flex justify-between items-start mb-2 group-hover:translate-x-1 transition-transform">
+                                        <h3 className="font-playfair text-xl font-normal text-[var(--text-primary)]">{product.name}</h3>
+                                        <span className="text-sm font-medium tracking-tighter text-[var(--text-primary)]">${product.basePrice.toFixed(0)}</span>
                                     </div>
+
+                                    <p className="text-[var(--text-secondary)] uppercase text-[0.6rem] tracking-[0.2em] font-medium mb-6">
+                                        Artistry by {product.merchant?.shopName || 'Scent Artistry'}
+                                    </p>
+
+                                    <Link
+                                        href={`/product/${product.id}`}
+                                        className="mt-auto px-6 py-3 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] text-center hover:bg-[var(--text-primary)] hover:text-[var(--bg-primary)] transition-all duration-300"
+                                    >
+                                        View Essence
+                                    </Link>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+                </div>
             </section>
 
-            <footer style={{ marginTop: '8rem', padding: '4rem 0', borderTop: '1px solid hsla(var(--border-glass))', textAlign: 'center' }}>
-                <p style={{ fontSize: '0.8rem', color: 'hsl(var(--text-secondary))' }}>© 2026 SCENT Marketplace. Pure Elegance.</p>
+            <footer className="py-20 border-t border-[var(--border)]">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <p className="uppercase text-[0.6rem] tracking-[0.4em] text-[var(--text-secondary)] font-medium">© 2026 Scent Marketplace</p>
+                </div>
             </footer>
         </main>
     );

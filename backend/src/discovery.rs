@@ -5,9 +5,9 @@ use axum::{
     Json,
 };
 use serde::{Deserialize, Serialize};
-use sqlx::SqlitePool;
+use sqlx::{SqlitePool, Row};
 use crate::models::{Product, ProductType, InventoryItem};
-use chrono::Utc;
+use chrono::{Utc, DateTime};
 
 #[derive(Deserialize)]
 pub struct DiscoveryQuery {
@@ -37,65 +37,65 @@ pub async fn discover_products(
     }
     sql.push_str(" ORDER BY p.createdAt DESC");
 
-    let mut q = sqlx::query_as::<_, (Product, Option<String>)>(&sql);
+    // let mut q = sqlx::query_as::<_, (Product, Option<String>)>(&sql);
     
     // Note: Manual query building with sqlx::query_as! is tricky for dynamic filters
     // Using a simpler approach for now since sqlx::query_as! needs a literal string.
     
-    let products = if query.r#type.is_some() && query.merchant_id.is_some() {
-         sqlx::query!(
-            r#"SELECT p.id, p.name, p.description, p.product_type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.product_type = ? AND p.merchantId = ? ORDER BY p.createdAt DESC"#,
-            query.r#type,
-            query.merchant_id
+    let products: Vec<sqlx::sqlite::SqliteRow> = if query.r#type.is_some() && query.merchant_id.is_some() {
+         sqlx::query(
+            r#"SELECT p.id, p.name, p.description, p.type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? AND p.merchantId = ? ORDER BY p.createdAt DESC"#,
         )
+        .bind(query.r#type)
+        .bind(query.merchant_id)
         .fetch_all(&pool)
         .await
     } else if let Some(t) = query.r#type {
-        sqlx::query!(
-            r#"SELECT p.id, p.name, p.description, p.product_type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.product_type = ? ORDER BY p.createdAt DESC"#,
-            t
+        sqlx::query(
+            r#"SELECT p.id, p.name, p.description, p.type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? ORDER BY p.createdAt DESC"#,
         )
+        .bind(t)
         .fetch_all(&pool)
         .await
     } else if let Some(m_id) = query.merchant_id {
-        sqlx::query!(
-            r#"SELECT p.id, p.name, p.description, p.product_type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.merchantId = ? ORDER BY p.createdAt DESC"#,
-            m_id
+        sqlx::query(
+            r#"SELECT p.id, p.name, p.description, p.type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.merchantId = ? ORDER BY p.createdAt DESC"#,
         )
+        .bind(m_id)
         .fetch_all(&pool)
         .await
     } else {
-        sqlx::query!(
-            r#"SELECT p.id, p.name, p.description, p.product_type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id ORDER BY p.createdAt DESC"#
+        sqlx::query(
+            r#"SELECT p.id, p.name, p.description, p.type as "product_type: ProductType", p.merchantId as "merchant_id", p.imageUrl as "image_url?", p.basePrice as "base_price", p.createdAt as "created_at: DateTime<Utc>", m.shopName as "shop_name?" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id ORDER BY p.createdAt DESC"#
         )
         .fetch_all(&pool)
         .await
     }
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
     let mut result = Vec::new();
     for row in products {
-        let items = sqlx::query_as!(
-            InventoryItem,
-            r#"SELECT id, productId as "product_id", sku, stockLevel as "stock_level", priceAmount as "price_amount?" FROM InventoryItem WHERE productId = ?"#,
-            row.id
+        let row_id: String = row.get("id");
+        let items = sqlx::query_as::<_, InventoryItem>(
+            r#"SELECT id, productId as "product_id", sku, stockLevel as "stock_level", priceAmount as "price_amount?" FROM InventoryItem WHERE productId = ?"#
         )
+        .bind(&row_id)
         .fetch_all(&pool)
         .await
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+        .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
         result.push(ProductWithMerchantAndItems {
             product: Product {
-                id: row.id,
-                name: row.name,
-                description: row.description,
-                product_type: row.product_type,
-                merchant_id: row.merchant_id,
-                image_url: row.image_url,
-                base_price: row.base_price,
-                created_at: row.created_at,
+                id: row.get::<String, _>("id"),
+                name: row.get::<String, _>("name"),
+                description: row.get::<Option<String>, _>("description"),
+                product_type: row.get::<ProductType, _>("product_type"),
+                merchant_id: row.get::<String, _>("merchant_id"),
+                image_url: row.get::<Option<String>, _>("image_url"),
+                base_price: row.get::<f64, _>("base_price"),
+                created_at: row.get::<DateTime<Utc>, _>("created_at"),
             },
-            shop_name: row.shop_name,
+            shop_name: row.get::<Option<String>, _>("shop_name"),
             items,
         });
     }

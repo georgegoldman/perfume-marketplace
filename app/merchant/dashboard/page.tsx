@@ -18,46 +18,68 @@ export default function MerchantDashboard() {
     }, [merchant?.id]);
 
     return (
-        <div>
-            <header style={{ marginBottom: '3rem' }}>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Welcome back, <span className="text-gradient">{merchant?.name || 'Partner'}</span></h2>
-                <p style={{ color: 'hsl(var(--text-secondary))' }}>Here&apos;s an overview of your boutique&apos;s performance.</p>
+        <div className="space-y-16">
+            <header className="mb-14">
+                <h2 className="serif text-4xl md:text-5xl mb-2 font-normal text-[var(--text-primary)]">
+                    Welcome back, {merchant?.name || 'Partner'}
+                </h2>
+                <p className="text-mute text-sm md:text-base">
+                    Your olfactory boutique summary.
+                </p>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                 {[
-                    { label: 'Total Revenue', value: '$0.00', icon: '💰', trend: '+0%' },
+                    { label: 'Total Revenue', value: '$0.00', icon: '💰', trend: '0%' },
                     { label: 'Active Products', value: '0', icon: '💎', trend: 'Neutral' },
                     { label: 'Pending Orders', value: '0', icon: '🛍️', trend: 'Stable' },
-                    { label: 'Low Stock Alerts', value: '0', icon: '⚠️', trend: 'Clear' },
+                    { label: 'Inventory Health', value: '100%', icon: '🌿', trend: 'Optimal' },
                 ].map((stat) => (
-                    <div key={stat.label} className="glass" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.5rem' }}>{stat.icon}</span>
-                            <span style={{ fontSize: '0.75rem', color: stat.trend.includes('+') ? '#44ff44' : 'hsl(var(--text-secondary))', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '4px' }}>{stat.trend}</span>
-                        </div>
-                        <div>
-                            <p style={{ fontSize: '0.85rem', color: 'hsl(var(--text-secondary))', marginBottom: '0.25rem' }}>{stat.label}</p>
-                            <h3 style={{ fontSize: '1.8rem', fontWeight: 700 }}>{stat.value}</h3>
+                    <div key={stat.label} className="card group hover:shadow-lg transition-all duration-300">
+                        <p className="uppercase text-mute text-[0.6rem] font-black tracking-[0.2em] mb-4">
+                            {stat.label}
+                        </p>
+                        <div className="flex justify-between items-baseline">
+                            <h3 className="serif text-3xl font-normal text-[var(--text-primary)]">
+                                {stat.value}
+                            </h3>
+                            <span className="text-[0.6rem] text-[var(--text-secondary)] font-bold opacity-60">
+                                {stat.trend}
+                            </span>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
-                <div className="glass" style={{ padding: '2rem', minHeight: '300px' }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>Recent Activity</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'hsl(var(--text-secondary))', opacity: 0.5 }}>
-                        <p>No recent activity yet.</p>
-                        <p style={{ fontSize: '0.8rem' }}>Start by adding a product to your inventory.</p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="card lg:col-span-2 min-h-[400px] flex flex-col">
+                    <h3 className="serif uppercase text-xs font-black tracking-[0.2em] mb-10 text-[var(--text-primary)]">
+                        Recent Activity
+                    </h3>
+                    <div className="flex-1 flex flex-col justify-center items-center text-center py-20">
+                        <p className="serif text-2xl text-mute mb-4 italic font-light">
+                            The stage is set.
+                        </p>
+                        <p className="text-mute uppercase text-[0.65rem] font-bold tracking-[0.1em] opacity-70">
+                            Add your first product to begin.
+                        </p>
                     </div>
                 </div>
-                <div className="glass glass-gold" style={{ padding: '2rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>Quick Actions</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <button className="btn-gold" style={{ width: '100%' }}>Add New Product</button>
-                        <button style={{ width: '100%', background: 'transparent', border: '1px solid hsla(var(--border-glass))', color: 'white', padding: '12px', borderRadius: '8px', cursor: 'pointer' }}>Generate Sales Report</button>
-                        <button style={{ width: '100%', background: 'transparent', border: '1px solid hsla(var(--border-glass))', color: 'white', padding: '12px', borderRadius: '8px', cursor: 'pointer' }}>Contact Support</button>
+
+                <div className="card bg-[var(--bg-primary)] h-fit">
+                    <h3 className="serif uppercase text-xs font-black tracking-[0.2em] mb-8 text-[var(--text-primary)]">
+                        Quick Actions
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                        <button className="px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:opacity-90 transition-all">
+                            New Product
+                        </button>
+                        <button className="px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
+                            Sales Report
+                        </button>
+                        <button className="px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
+                            Settings
+                        </button>
                     </div>
                 </div>
             </div>

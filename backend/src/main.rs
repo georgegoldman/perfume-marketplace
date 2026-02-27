@@ -16,6 +16,7 @@ mod products;
 mod discovery;
 mod orders;
 mod middleware;
+mod settings;
 
 #[tokio::main]
 async fn main() {
@@ -37,6 +38,7 @@ async fn main() {
     let protected_routes = Router::new()
         .route("/api/products", post(products::create_product))
         .route("/api/orders/merchant/:merchant_id", get(orders::get_merchant_orders))
+        .route("/api/merchant/theme", post(settings::update_theme)) // Using POST or PUT, let's stick to POST for simplicity as others use it
         .layer(axum::middleware::from_fn_with_state(pool.clone(), middleware::auth_middleware));
 
     let app = Router::new()

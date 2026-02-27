@@ -21,7 +21,6 @@ export default function DashboardLayout({
         } else {
             const parsed = JSON.parse(storedMerchant) as Merchant;
             if (parsed.id !== merchant?.id) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setMerchant(parsed);
             }
         }
@@ -32,7 +31,11 @@ export default function DashboardLayout({
         router.push('/merchant/login');
     };
 
-    if (!merchant) return <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'hsl(var(--bg-deep))', color: 'white' }}>Authenticating...</div>;
+    if (!merchant) return (
+        <div className="min-h-screen flex justify-center items-center bg-[var(--bg-secondary)] text-[var(--text-primary)]">
+             <div className="w-12 h-[1px] bg-[var(--text-primary)] animate-pulse"></div>
+        </div>
+    );
 
     const navItems = [
         { name: 'Overview', path: '/merchant/dashboard', icon: '📊' },
@@ -42,66 +45,82 @@ export default function DashboardLayout({
     ];
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: 'hsl(var(--bg-deep))' }}>
-            {/* Sidebar */}
-            <aside className="glass" style={{ width: '280px', margin: '1rem', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', gap: '2rem', borderRadius: '24px' }}>
-                <div style={{ padding: '0 1rem' }}>
-                    <h1 className="text-gradient" style={{ fontSize: '1.5rem', fontWeight: 700 }}>SCENT</h1>
-                    <p style={{ fontSize: '0.75rem', color: 'hsl(var(--primary-gold))', fontWeight: 600, letterSpacing: '0.1em', marginTop: '0.5rem' }}>{merchant.shopName || 'Boutique'}</p>
-                </div>
-
-                <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.path}
-                            href={item.path}
-                            style={{
-                                padding: '12px 16px',
-                                borderRadius: '12px',
-                                color: pathname === item.path ? 'hsl(var(--bg-deep))' : 'white',
-                                background: pathname === item.path ? 'hsl(var(--primary-gold))' : 'transparent',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                fontSize: '0.9rem',
-                                fontWeight: 500,
-                                transition: 'all 0.2s ease',
-                                textDecoration: 'none'
-                            }}
-                        >
-                            <span>{item.icon}</span>
-                            {item.name}
-                        </Link>
-                    ))}
-                </nav>
-
-                <div style={{ borderTop: '1px solid hsla(var(--border-glass))', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div style={{ padding: '0 1rem' }}>
-                        <p style={{ fontSize: '0.85rem', fontWeight: 600 }}>{merchant.name}</p>
-                        <p style={{ fontSize: '0.7rem', color: 'hsl(var(--text-secondary))' }}>{merchant.email}</p>
+        <div className="flex flex-col min-h-screen bg-[var(--bg-secondary)] text-[var(--text-primary)]">
+            <div className="flex flex-1 overflow-hidden">
+                {/* Sidebar - Desktop */}
+                <aside className="hidden lg:flex w-72 bg-[var(--bg-primary)] border-r border-[var(--border)] flex-col sticky top-0 h-screen z-50">
+                    <div className="p-10">
+                        <Link href="/" className="font-playfair text-2xl font-bold tracking-widest no-underline text-inherit">SCENT</Link>
+                        <div className="mt-4 flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <p className="uppercase text-[0.6rem] font-bold tracking-widest text-[var(--text-secondary)]">{merchant.shopName || 'Boutique'}</p>
+                        </div>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid hsla(var(--border-glass))',
-                            color: 'white',
-                            padding: '10px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '0.85rem',
-                            width: '100%'
-                        }}
-                    >
-                        Logout
-                    </button>
-                </div>
-            </aside>
 
-            {/* Main Content */}
-            <main style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
-                {children}
-            </main>
+                    <nav className="flex-1 px-6 space-y-2">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.path}
+                                href={item.path}
+                                className={`flex items-center gap-4 px-6 py-4 uppercase text-[0.65rem] font-black tracking-widest no-underline transition-all duration-200 border-l-2 ${
+                                    pathname === item.path 
+                                    ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--text-primary)]' 
+                                    : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]/50'
+                                }`}
+                            >
+                                <span className="text-lg">{item.icon}</span>
+                                {item.name}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    <div className="p-8 border-t border-[var(--border)] mt-auto bg-[var(--bg-secondary)]/30">
+                        <div className="mb-6">
+                            <p className="uppercase text-[0.7rem] font-black tracking-widest truncate">{merchant.name}</p>
+                            <p className="text-[var(--text-secondary)] text-[0.6rem] font-medium truncate opacity-60">{merchant.email}</p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="w-full py-3 border border-[var(--border)] uppercase text-[0.6rem] font-bold tracking-widest hover:border-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--bg-primary)] transition-all"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <main className="flex-1 overflow-y-auto min-w-0">
+                    <div className="w-full max-w-[1400px] mx-auto p-6 md:p-12 lg:p-16 mb-20 lg:mb-0">
+                        {children}
+                    </div>
+                </main>
+            </div>
+
+            {/* Mobile Bottom Navigation */}
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[var(--bg-primary)]/90 backdrop-blur-lg border-t border-[var(--border)] flex justify-around items-center px-4 z-[1000] shadow-2xl">
+                {navItems.map((item) => (
+                    <Link
+                        key={item.path}
+                        href={item.path}
+                        className={`flex flex-col items-center gap-1.5 no-underline transition-all ${
+                            pathname === item.path ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] opacity-50'
+                        }`}
+                    >
+                        <span className="text-xl">{item.icon}</span>
+                        <span className="uppercase text-[0.55rem] font-black tracking-tighter">{item.name}</span>
+                        {pathname === item.path && <div className="absolute -bottom-1 w-8 h-[2px] bg-[var(--text-primary)]"></div>}
+                    </Link>
+                ))}
+                <button
+                    onClick={handleLogout}
+                    className="flex flex-col items-center gap-1.5 text-[var(--text-secondary)] opacity-50"
+                >
+                    <span className="text-xl">🚪</span>
+                    <span className="uppercase text-[0.55rem] font-black tracking-tighter">Exit</span>
+                </button>
+            </nav>
+            {/* Safe Spacer for Mobile Nav */}
+            <div className="lg:hidden h-20"></div>
         </div>
     );
 }

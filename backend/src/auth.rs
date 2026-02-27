@@ -7,11 +7,13 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use argon2::{
-    password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
     Argon2,
 };
+use rand::rngs::OsRng;
 use jsonwebtoken::{encode, Header, EncodingKey};
-use chrono::{Utc, Duration};
+use std::env;
+use chrono::{Utc, Duration, DateTime};
 use crate::models::Merchant;
 use uuid::Uuid;
 
@@ -40,6 +42,7 @@ pub struct MerchantInfo {
     pub id: String,
     pub name: String,
     pub email: String,
+    pub preferred_theme: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -62,12 +65,13 @@ pub async fn register(
     let id = Uuid::new_v4().to_string();
 
     sqlx::query!(
-        "INSERT INTO Merchant (id, name, email, passwordHash, shopName) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO Merchant (id, name, email, passwordHash, shopName, preferredTheme) VALUES (?, ?, ?, ?, ?, ?)",
         id,
         payload.name,
         payload.email,
         password_hash,
-        payload.shop_name
+        payload.shop_name,
+        "SYSTEM"
     )
     .execute(&pool)
     .await
@@ -88,12 +92,12 @@ pub async fn login(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let merchant = sqlx::query_as!(
         Merchant,
-        r#"SELECT id, name, email, passwordHash as "password_hash: String", shopName as "shop_name?", logoUrl as "logo_url?", createdAt as "created_at: DateTime<Utc>" FROM Merchant WHERE email = ?"#,
+        r#"SELECT id, name, email, passwordHash as "password_hash: String", shopName as "shop_name?", logoUrl as "logo_url?", preferredTheme as "preferred_theme: String", createdAt as "created_at: DateTime<Utc>" FROM Merchant WHERE email = ?"#,
         payload.email
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?
+    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?
     .ok_or((StatusCode::UNAUTHORIZED, Json(serde_json::json!({"error": "Invalid email or password"}))))?;
 
     let parsed_hash = PasswordHash::new(&merchant.password_hash)
@@ -116,7 +120,7 @@ pub async fn login(
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret("secret".as_ref()), // Replace with env var
+        &EncodingKey::from_secret(env::var("JWT_SECRET").expect("JWT_SECRET must be set").as_ref()),
     )
     .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": "Failed to generate token"}))))?;
 
@@ -126,6 +130,7 @@ pub async fn login(
             id: merchant.id,
             name: merchant.name,
             email: merchant.email,
+            preferred_theme: merchant.preferred_theme,
         },
     }))
 }

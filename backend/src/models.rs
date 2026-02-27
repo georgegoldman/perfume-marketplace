@@ -10,10 +10,11 @@ pub struct Merchant {
     pub password_hash: String,
     pub shop_name: Option<String>,
     pub logo_url: Option<String>,
+    pub preferred_theme: String,
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+#[derive(Debug, Serialize, Deserialize, sqlx::Type, Clone, Copy, PartialEq, Eq)]
 #[sqlx(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ProductType {
     Perfume,
@@ -22,7 +23,7 @@ pub enum ProductType {
     Deodorant,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct Product {
     pub id: String,
     pub name: String,
@@ -34,7 +35,7 @@ pub struct Product {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct InventoryItem {
     pub id: String,
     pub product_id: String,

@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use crate::models::{Order, OrderItem};
 use uuid::Uuid;
-use chrono::Utc;
+use chrono::{Utc, DateTime};
 
 #[derive(Deserialize)]
 pub struct CreateOrderRequest {
@@ -35,7 +35,7 @@ pub async fn create_order(
     State(pool): State<SqlitePool>,
     Json(payload): Json<CreateOrderRequest>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let mut tx = pool.begin().await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    let mut tx = pool.begin().await.map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
     let order_id = Uuid::new_v4().to_string();
     let total_amount: f64 = payload.items.iter().map(|item| item.price_at_sale * item.quantity as f64).sum();
@@ -50,7 +50,7 @@ pub async fn create_order(
     )
     .execute(&mut *tx)
     .await
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
     for item in payload.items {
         let item_id = Uuid::new_v4().to_string();
@@ -64,10 +64,10 @@ pub async fn create_order(
         )
         .execute(&mut *tx)
         .await
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+        .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
     }
 
-    tx.commit().await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    tx.commit().await.map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
     Ok((StatusCode::CREATED, Json(serde_json::json!({"id": order_id, "message": "Order created successfully"}))))
 }
@@ -76,25 +76,24 @@ pub async fn get_merchant_orders(
     State(pool): State<SqlitePool>,
     Path(merchant_id): Path<String>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let orders = sqlx::query_as!(
-        Order,
-        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", totalAmount as "total_amount", status, createdAt as "created_at: DateTime<Utc>" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#,
-        merchant_id
+    let orders: Vec<Order> = sqlx::query_as::<_, Order>(
+        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", totalAmount as "total_amount: f64", status, createdAt as "created_at: DateTime<Utc>" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#
     )
+    .bind(merchant_id)
     .fetch_all(&pool)
     .await
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+    .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
     let mut result = Vec::new();
     for order in orders {
         let items = sqlx::query_as!(
             OrderItem,
-            r#"SELECT id, orderId as "order_id", productId as "product_id", quantity, priceAtSale as "price_at_sale" FROM OrderItem WHERE orderId = ?"#,
+            r#"SELECT id, orderId as "order_id", productId as "product_id", quantity as "quantity: i32", priceAtSale as "price_at_sale" FROM OrderItem WHERE orderId = ?"#,
             order.id
         )
         .fetch_all(&pool)
         .await
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
+        .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 
         result.push(OrderWithItems { order, items });
     }

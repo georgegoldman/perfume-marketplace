@@ -1,0 +1,12 @@
+/home/goldman/.gemini/antigravity/scratch/perfume-marketplace/backend/target/debug/deps/argon2-670aac1d349313b7.d: /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/lib.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/algorithm.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/blake2b_long.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/block.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/error.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/params.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/version.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/../README.md
+
+/home/goldman/.gemini/antigravity/scratch/perfume-marketplace/backend/target/debug/deps/libargon2-670aac1d349313b7.rmeta: /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/lib.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/algorithm.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/blake2b_long.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/block.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/error.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/params.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/version.rs /home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/../README.md
+
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/lib.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/algorithm.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/blake2b_long.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/block.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/error.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/params.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/version.rs:
+/home/goldman/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/argon2-0.5.3/src/../README.md:
