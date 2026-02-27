@@ -25,5 +25,24 @@ export interface Product {
     imageUrl?: string | null;
     basePrice: number;
     items?: InventoryItem[];
+    shopName?: string | null;
     merchant?: { shopName: string | null };
+}
+export interface OrderItem {
+    id: string;
+    orderId: string;
+    productId: string;
+    quantity: number;
+    priceAtSale: number;
+}
+
+export interface Order {
+    id: string;
+    merchantId: string;
+    customerEmail: string;
+    deliveryLocation: string | null;
+    totalAmount: number;
+    status: string;
+    createdAt: string;
+    items?: OrderItem[];
 }

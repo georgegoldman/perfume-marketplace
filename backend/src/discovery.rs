@@ -12,6 +12,7 @@ use chrono::{Utc, DateTime};
 use std::str::FromStr;
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DiscoveryQuery {
     pub r#type: Option<ProductType>,
     pub merchant_id: Option<String>,
@@ -44,34 +45,39 @@ pub async fn discover_products(
     // Note: Manual query building with sqlx::query_as! is tricky for dynamic filters
     // Using a simpler approach for now since sqlx::query_as! needs a literal string.
     
-    let products: Vec<sqlx::sqlite::SqliteRow> = if query.r#type.is_some() && query.merchant_id.is_some() {
-         sqlx::query(
-            r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? AND p.merchantId = ? ORDER BY p.createdAt DESC"#,
-        )
-        .bind(query.r#type)
-        .bind(query.merchant_id)
-        .fetch_all(&pool)
-        .await
-    } else if let Some(t) = query.r#type {
-        sqlx::query(
-            r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? ORDER BY p.createdAt DESC"#,
-        )
-        .bind(t)
-        .fetch_all(&pool)
-        .await
-    } else if let Some(m_id) = query.merchant_id {
-        sqlx::query(
-            r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.merchantId = ? ORDER BY p.createdAt DESC"#,
-        )
-        .bind(m_id)
-        .fetch_all(&pool)
-        .await
-    } else {
-        sqlx::query(
-            r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id ORDER BY p.createdAt DESC"#
-        )
-        .fetch_all(&pool)
-        .await
+    let products: Vec<sqlx::sqlite::SqliteRow> = match (&query.r#type, &query.merchant_id) {
+        (Some(t), Some(m_id)) => {
+            sqlx::query(
+                r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? AND p.merchantId = ? ORDER BY p.createdAt DESC"#,
+            )
+            .bind(t)
+            .bind(m_id)
+            .fetch_all(&pool)
+            .await
+        }
+        (Some(t), None) => {
+            sqlx::query(
+                r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.type = ? ORDER BY p.createdAt DESC"#,
+            )
+            .bind(t)
+            .fetch_all(&pool)
+            .await
+        }
+        (None, Some(m_id)) => {
+            sqlx::query(
+                r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id WHERE p.merchantId = ? ORDER BY p.createdAt DESC"#,
+            )
+            .bind(m_id)
+            .fetch_all(&pool)
+            .await
+        }
+        (None, None) => {
+            sqlx::query(
+                r#"SELECT p.id, p.name, p.description, p.type as "product_type", p.merchantId as "merchant_id", p.imageUrl as "image_url", p.basePrice as "base_price", p.createdAt as "created_at", m.shopName as "shop_name" FROM Product p LEFT JOIN Merchant m ON p.merchantId = m.id ORDER BY p.createdAt DESC"#
+            )
+            .fetch_all(&pool)
+            .await
+        }
     }
     .map_err(|e: sqlx::Error| (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({"error": e.to_string()}))))?;
 

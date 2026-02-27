@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Merchant } from '@/lib/types';
 
 export default function MerchantDashboard() {
@@ -71,15 +72,21 @@ export default function MerchantDashboard() {
                         Quick Actions
                     </h3>
                     <div className="flex flex-col gap-4">
-                        <button className="px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:opacity-90 transition-all">
-                            New Product
-                        </button>
-                        <button className="px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
-                            Sales Report
-                        </button>
-                        <button className="px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
-                            Settings
-                        </button>
+                        <Link href="/merchant/dashboard/inventory?add=true" className="no-underline">
+                            <button className="w-full px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:opacity-90 transition-all">
+                                New Product
+                            </button>
+                        </Link>
+                        <Link href="/merchant/dashboard/reports" className="no-underline">
+                            <button className="w-full px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
+                                Sales Report
+                            </button>
+                        </Link>
+                        <Link href="/merchant/dashboard/settings" className="no-underline">
+                            <button className="w-full px-8 py-4 border border-[var(--border)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:border-[var(--text-primary)] transition-all text-[var(--text-primary)]">
+                                Settings
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>

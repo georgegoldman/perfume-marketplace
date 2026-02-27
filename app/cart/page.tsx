@@ -52,7 +52,7 @@ export default function CartPage() {
                                                 {item.product.type.replace('_', ' ')}
                                             </span>
                                             <h3 className="font-playfair text-2xl font-normal text-[var(--text-primary)]">{item.product.name}</h3>
-                                            <p className="text-[var(--text-secondary)] font-light">${item.product.basePrice.toFixed(2)}</p>
+                                            <p className="text-[var(--text-secondary)] font-light">₦{item.product.basePrice.toLocaleString()}</p>
                                         </div>
                                         <div className="flex flex-col items-center md:items-end gap-6">
                                             <div className="flex items-center border border-[var(--border)]">
@@ -88,7 +88,7 @@ export default function CartPage() {
                                         <p className="text-[var(--text-secondary)] text-sm font-light">{cartCount} items</p>
                                     </div>
                                     <p className="font-playfair text-4xl text-[var(--text-primary)] tracking-tighter">
-                                        ${cartTotal.toFixed(2)}
+                                        ₦{cartTotal.toLocaleString()}
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-6">
@@ -99,7 +99,7 @@ export default function CartPage() {
                                         Proceed to Final Acquisition
                                     </Link>
                                     <p className="text-center text-[var(--text-secondary)] text-[0.6rem] uppercase tracking-[0.2em] font-medium opacity-50">
-                                        Secure transaction in USD.
+                                        Secure transaction in NGN.
                                     </p>
                                 </div>
                             </div>

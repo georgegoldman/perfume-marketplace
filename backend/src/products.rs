@@ -11,6 +11,7 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ProductQuery {
     pub merchant_id: String,
 }

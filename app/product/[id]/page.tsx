@@ -12,6 +12,7 @@ export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
+    const [quantity, setQuantity] = useState(1);
     const { addToCart, cartCount } = useCart();
 
     useEffect(() => {
@@ -97,9 +98,7 @@ export default function ProductDetailPage() {
                             <h1 className="font-playfair text-5xl md:text-7xl mb-8 font-normal leading-tight text-[var(--text-primary)]">
                                 {product.name}
                             </h1>
-                            <p className="text-2xl font-light text-[var(--text-primary)] mb-12 tracking-tight">
-                                ${product.basePrice.toFixed(2)}
-                            </p>
+                            <span className="text-3xl font-medium tracking-tighter text-[var(--text-primary)] mb-12">₦{product.basePrice.toLocaleString()}</span>
 
                             <div className="w-12 h-[1px] bg-[var(--text-primary)] mb-12"></div>
 
@@ -107,16 +106,35 @@ export default function ProductDetailPage() {
                                 {product.description || 'A masterfully crafted olfactory experience, designed to elevate your sensory presence and leave a lasting impression of refined elegance.'}
                             </p>
 
-                            <div className="flex flex-col gap-6 mb-20">
+                            <div className="flex flex-col gap-8 mb-20">
+                                <div className="flex items-center gap-6">
+                                    <span className="uppercase text-[0.6rem] font-black tracking-[0.2em] text-[var(--text-secondary)]">Quantity</span>
+                                    <div className="flex items-center border border-[var(--border)] bg-[var(--bg-secondary)]/30">
+                                        <button
+                                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                            className="w-12 h-12 flex justify-center items-center hover:bg-[var(--bg-secondary)] transition-colors text-lg"
+                                        >
+                                            −
+                                        </button>
+                                        <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+                                        <button
+                                            onClick={() => setQuantity(quantity + 1)}
+                                            className="w-12 h-12 flex justify-center items-center hover:bg-[var(--bg-secondary)] transition-colors text-lg"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <button
-                                    onClick={() => product && addToCart(product)}
+                                    onClick={() => product && addToCart(product, quantity)}
                                     className="w-full py-6 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-bold tracking-[0.3em] hover:opacity-90 transition-all shadow-xl"
                                 >
                                     Add to Selection
                                 </button>
                                 <div className="flex justify-center items-center gap-4 text-[0.6rem] text-[var(--text-secondary)] uppercase tracking-[0.2em] font-bold opacity-60">
                                     <div className="h-[1px] w-8 bg-[var(--border)]"></div>
-                                    <span>Curated by {product.merchant?.shopName || 'Scent Boutique'}</span>
+                                    <span>Curated by {product.shopName || product.merchant?.shopName || 'Parfum Antique'}</span>
                                     <div className="h-[1px] w-8 bg-[var(--border)]"></div>
                                 </div>
                             </div>

@@ -49,14 +49,17 @@ model InventoryItem {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  merchantId    String
-  merchant      Merchant    @relation(fields: [merchantId], references: [id])
-  customerEmail String
-  totalAmount   Float
-  status        String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
-  items         OrderItem[]
-  createdAt     DateTime    @default(now())
+  id               String      @id @default(cuid())
+  merchantId       String
+  merchant         Merchant    @relation(fields: [merchantId], references: [id])
+  customerEmail    String
+  deliveryLocation String?
+  totalAmount      Float
+  status           String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  paymentStatus    String      @default("PENDING") // PENDING, PAID, FAILED
+  paymentReference String?
+  items            OrderItem[]
+  createdAt        DateTime    @default(now())
 }
 
 model OrderItem {

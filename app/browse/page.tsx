@@ -96,51 +96,53 @@ export default function BrowsePage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
-                            {products.map((product) => (
-                                <div key={product.id} className="group relative flex flex-col">
-                                    <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden border border-[var(--border)] mb-6">
-                                        {product.imageUrl ? (
-                                            <Image
-                                                src={product.imageUrl}
-                                                alt={product.name}
-                                                fill
-                                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex justify-center items-center opacity-10">
-                                                <span className="text-6xl">{product.type === 'PERFUME' ? '🧪' : '✨'}</span>
+                            {products
+                                .filter(product => filter === 'ALL' || product.type === filter)
+                                .map((product) => (
+                                    <div key={product.id} className="group relative flex flex-col">
+                                        <div className="aspect-[3/4] bg-[var(--bg-secondary)] relative overflow-hidden border border-[var(--border)] mb-6">
+                                            {product.imageUrl ? (
+                                                <Image
+                                                    src={product.imageUrl}
+                                                    alt={product.name}
+                                                    fill
+                                                    className="object-cover transition-all duration-700 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex justify-center items-center opacity-10">
+                                                    <span className="text-6xl">{product.type === 'PERFUME' ? '🧪' : '✨'}</span>
+                                                </div>
+                                            )}
+                                            <div className="absolute top-4 left-4 bg-[var(--bg-primary)] px-3 py-1 text-[0.55rem] font-black uppercase tracking-[0.2em] border border-[var(--border)]">
+                                                {product.type.replace('_', ' ')}
                                             </div>
-                                        )}
-                                        <div className="absolute top-4 left-4 bg-[var(--bg-primary)] px-3 py-1 text-[0.55rem] font-black uppercase tracking-[0.2em] border border-[var(--border)]">
-                                            {product.type.replace('_', ' ')}
+                                        </div>
+
+                                        <div className="flex justify-between items-start mb-2 group-hover:translate-x-1 transition-transform">
+                                            <h3 className="font-playfair text-xl font-normal text-[var(--text-primary)]">{product.name}</h3>
+                                            <span className="text-sm font-medium tracking-tighter text-[var(--text-primary)]">₦{product.basePrice.toLocaleString()}</span>
+                                        </div>
+
+                                        <p className="text-[var(--text-secondary)] uppercase text-[0.6rem] tracking-[0.2em] font-medium mb-6">
+                                            Artistry by {product.shopName || product.merchant?.shopName || 'Scent Artistry'}
+                                        </p>
+
+                                        <div className="flex gap-4 mt-auto">
+                                            <Link
+                                                href={`/product/${product.id}`}
+                                                className="flex-1 px-4 py-3 border border-[var(--border)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:border-[var(--text-primary)] transition-all duration-300 no-underline text-inherit"
+                                            >
+                                                Details
+                                            </Link>
+                                            <button
+                                                onClick={() => addToCart(product)}
+                                                className="flex-1 px-4 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] border border-[var(--text-primary)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:opacity-90 transition-all duration-300"
+                                            >
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div className="flex justify-between items-start mb-2 group-hover:translate-x-1 transition-transform">
-                                        <h3 className="font-playfair text-xl font-normal text-[var(--text-primary)]">{product.name}</h3>
-                                        <span className="text-sm font-medium tracking-tighter text-[var(--text-primary)]">${product.basePrice.toFixed(0)}</span>
-                                    </div>
-
-                                    <p className="text-[var(--text-secondary)] uppercase text-[0.6rem] tracking-[0.2em] font-medium mb-6">
-                                        Artistry by {product.merchant?.shopName || 'Scent Artistry'}
-                                    </p>
-
-                                    <div className="flex gap-4 mt-auto">
-                                        <Link
-                                            href={`/product/${product.id}`}
-                                            className="flex-1 px-4 py-3 border border-[var(--border)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:border-[var(--text-primary)] transition-all duration-300 no-underline text-inherit"
-                                        >
-                                            Details
-                                        </Link>
-                                        <button
-                                            onClick={() => addToCart(product)}
-                                            className="flex-1 px-4 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] border border-[var(--text-primary)] uppercase text-[0.6rem] font-bold tracking-[0.2em] text-center hover:opacity-90 transition-all duration-300"
-                                        >
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     )}
                 </div>

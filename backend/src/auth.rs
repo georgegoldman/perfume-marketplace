@@ -42,6 +42,7 @@ pub struct MerchantInfo {
     pub id: String,
     pub name: String,
     pub email: String,
+    pub shop_name: Option<String>,
     pub preferred_theme: String,
 }
 
@@ -130,6 +131,7 @@ pub async fn login(
             id: merchant.id,
             name: merchant.name,
             email: merchant.email,
+            shop_name: merchant.shop_name,
             preferred_theme: merchant.preferred_theme,
         },
     }))

@@ -64,7 +64,7 @@ export default function LandingPage() {
                 src="https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=2000&auto=format&fit=crop"
                 alt="Signature Scent"
                 fill
-                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                className="object-cover transition-all duration-1000 scale-105 group-hover:scale-100"
                 priority
               />
               <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-700"></div>
@@ -103,7 +103,7 @@ export default function LandingPage() {
                   src={cat.img}
                   alt={cat.name}
                   fill
-                  className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-90 group-hover:opacity-100"
+                  className="object-cover group-hover:scale-110 transition-all duration-700 opacity-90 group-hover:opacity-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
                 <div className="absolute bottom-10 left-10">

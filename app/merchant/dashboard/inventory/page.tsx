@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { apiFetch } from '@/lib/api-client';
 import { Product, Merchant } from '@/lib/types';
 
@@ -11,13 +12,15 @@ export default function InventoryPage() {
     const [newProduct, setNewProduct] = useState({
         name: '',
         description: '',
-        type: 'PERFUME',
+        productType: 'PERFUME',
         basePrice: '',
         sku: '',
         stockLevel: '',
+        imageUrl: '',
     });
     const [error, setError] = useState('');
     const [merchant, setMerchant] = useState<Merchant | null>(null);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         const storedMerchant = localStorage.getItem('merchant');
@@ -26,7 +29,11 @@ export default function InventoryPage() {
             setMerchant(m);
             fetchProducts(m.id);
         }
-    }, []);
+
+        if (searchParams.get('add') === 'true') {
+            setShowAddModal(true);
+        }
+    }, [searchParams]);
 
     const fetchProducts = async (merchantId: string) => {
         try {
@@ -50,12 +57,13 @@ export default function InventoryPage() {
                     ...newProduct,
                     basePrice: parseFloat(newProduct.basePrice),
                     stockLevel: parseInt(newProduct.stockLevel),
-                    merchantId: merchant?.id
+                    merchantId: merchant?.id,
+                    imageUrl: newProduct.imageUrl || null
                 }),
             });
 
             setShowAddModal(false);
-            setNewProduct({ name: '', description: '', type: 'PERFUME', basePrice: '', sku: '', stockLevel: '' });
+            setNewProduct({ name: '', description: '', productType: 'PERFUME', basePrice: '', sku: '', stockLevel: '', imageUrl: '' });
             if (merchant) fetchProducts(merchant.id);
         } catch (err: any) {
             setError(err.message || 'An error occurred');
@@ -108,7 +116,7 @@ export default function InventoryPage() {
                                     <tr key={product.id} className="hover:bg-[var(--bg-secondary)]/50 transition-colors group">
                                         <td className="p-6">
                                             <div className="flex items-center gap-5">
-                                                <div className="w-12 h-12 border border-[var(--border)] flex justify-center items-center text-xl grayscale group-hover:grayscale-0 transition-all bg-[var(--bg-secondary)]">
+                                                <div className="w-12 h-12 border border-[var(--border)] flex justify-center items-center text-xl transition-all bg-[var(--bg-secondary)]">
                                                     {product.type === 'PERFUME' ? '🧪' : '✨'}
                                                 </div>
                                                 <div>
@@ -123,7 +131,7 @@ export default function InventoryPage() {
                                             </span>
                                         </td>
                                         <td className="p-6 font-medium text-[var(--text-primary)]">
-                                            ${product.basePrice.toFixed(2)}
+                                            ₦{product.basePrice.toLocaleString()}
                                         </td>
                                         <td className="p-6">
                                             <div className="flex items-center gap-2">
@@ -192,13 +200,68 @@ export default function InventoryPage() {
                                 />
                             </div>
 
+                            <div className="space-y-4">
+                                <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Product Image</label>
+                                <div className="flex flex-col gap-4">
+                                    {newProduct.imageUrl && (
+                                        <div className="relative aspect-video w-full border border-[var(--border)] overflow-hidden bg-[var(--bg-secondary)]">
+                                            <img src={newProduct.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => setNewProduct({ ...newProduct, imageUrl: '' })}
+                                                className="absolute top-2 right-2 bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-black transition-colors"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    )}
+                                    <div className="relative">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onloadend = async () => {
+                                                        const base64 = reader.result as string;
+                                                        try {
+                                                            const { uploadImage } = await import('@/lib/cloudinary-actions');
+                                                            const url = await uploadImage(base64);
+                                                            setNewProduct({ ...newProduct, imageUrl: url });
+                                                        } catch (err) {
+                                                            setError('Upload failed. Please check your Cloudinary configuration.');
+                                                        }
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            }}
+                                            className="hidden"
+                                            id="image-upload"
+                                        />
+                                        <label
+                                            htmlFor="image-upload"
+                                            className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-[var(--border)] hover:border-[var(--text-primary)] transition-all cursor-pointer group"
+                                        >
+                                            <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">📸</span>
+                                            <span className="uppercase text-[0.6rem] font-bold tracking-widest text-mute group-hover:text-[var(--text-primary)]">
+                                                {newProduct.imageUrl ? 'Change Essence Visual' : 'Upload Essence Visual'}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <p className="text-[0.5rem] text-mute uppercase tracking-widest leading-relaxed">
+                                        Square or portrait images work best for the archive display.
+                                    </p>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
                                     <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Type</label>
                                     <select
                                         className="w-full bg-[var(--bg-primary)] border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors appearance-none cursor-pointer"
-                                        value={newProduct.type}
-                                        onChange={(e) => setNewProduct({ ...newProduct, type: e.target.value })}
+                                        value={newProduct.productType}
+                                        onChange={(e) => setNewProduct({ ...newProduct, productType: e.target.value })}
                                     >
                                         <option value="PERFUME">Fine Parfum</option>
                                         <option value="OIL_PERFUME">Botanical Oil</option>
@@ -207,7 +270,7 @@ export default function InventoryPage() {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Base Price ($)</label>
+                                    <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Base Price (₦)</label>
                                     <input
                                         required
                                         type="number"

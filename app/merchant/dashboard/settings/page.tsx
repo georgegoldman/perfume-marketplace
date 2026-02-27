@@ -28,12 +28,12 @@ export default function SettingsPage() {
                                 key={t.id}
                                 onClick={() => setTheme(t.id)}
                                 className={`flex items-center justify-between p-6 border transition-all duration-300 group ${theme === t.id
-                                        ? 'border-[var(--text-primary)] bg-[var(--bg-secondary)]'
-                                        : 'border-[var(--border)] bg-[var(--bg-primary)] hover:border-[var(--text-secondary)]'
+                                    ? 'border-[var(--text-primary)] bg-[var(--bg-secondary)]'
+                                    : 'border-[var(--border)] bg-[var(--bg-primary)] hover:border-[var(--text-secondary)]'
                                     }`}
                             >
                                 <div className="flex items-center gap-5">
-                                    <span className={`text-2xl transition-transform duration-300 group-hover:scale-110 ${theme === t.id ? 'opacity-100' : 'opacity-40 grayscale'}`}>
+                                    <span className={`text-2xl transition-transform duration-300 group-hover:scale-110 ${theme === t.id ? 'opacity-100' : 'opacity-40'}`}>
                                         {t.icon}
                                     </span>
                                     <div className="text-left">

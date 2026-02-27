@@ -2,25 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api-client';
-import { Merchant } from '@/lib/types';
-
-interface OrderItem {
-    id: string;
-    productId: string;
-    quantity: number;
-    priceAtSale: number;
-    productName?: string;
-}
-
-interface Order {
-    id: string;
-    merchantId: string;
-    customerEmail: string;
-    totalAmount: number;
-    status: string;
-    createdAt: string;
-    items: OrderItem[];
-}
+import { Merchant, Order } from '@/lib/types';
 
 export default function MerchantOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -111,12 +93,18 @@ export default function MerchantOrdersPage() {
                                     <div className="flex flex-wrap gap-x-12 gap-y-4">
                                         <div>
                                             <p className="uppercase text-[0.55rem] font-black text-mute tracking-widest mb-1">Items</p>
-                                            <p className="text-sm font-medium">{order.items.reduce((sum, i) => sum + i.quantity, 0)} Units</p>
+                                            <p className="text-sm font-medium">{order.items?.reduce((sum, i) => sum + i.quantity, 0) || 0} Units</p>
                                         </div>
                                         <div>
                                             <p className="uppercase text-[0.55rem] font-black text-mute tracking-widest mb-1">Total Value</p>
-                                            <p className="text-sm font-medium">${order.totalAmount.toFixed(2)}</p>
+                                            <p className="text-sm font-medium">₦{order.totalAmount.toLocaleString()}</p>
                                         </div>
+                                        {order.deliveryLocation && (
+                                            <div className="min-w-[200px]">
+                                                <p className="uppercase text-[0.55rem] font-black text-mute tracking-widest mb-1">Delivery To</p>
+                                                <p className="text-sm font-light italic text-[var(--text-secondary)]">{order.deliveryLocation}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -140,14 +128,14 @@ export default function MerchantOrdersPage() {
                             <div className="bg-[var(--bg-secondary)]/30 border-t border-[var(--border)] p-8">
                                 <h5 className="uppercase text-[0.55rem] font-black tracking-widest text-mute mb-4">Acquisition Manifest</h5>
                                 <div className="space-y-4">
-                                    {order.items.map((item) => (
+                                    {order.items?.map((item) => (
                                         <div key={item.id} className="flex justify-between items-center text-sm">
                                             <div className="flex items-center gap-4">
                                                 <span className="w-8 h-8 flex justify-center items-center bg-[var(--bg-primary)] border border-[var(--border)] text-xs">🧪</span>
                                                 <span className="font-light">Product ID: {item.productId.slice(0, 8)}...</span>
                                                 <span className="text-[var(--text-secondary)] text-[0.65rem] font-bold">× {item.quantity}</span>
                                             </div>
-                                            <span className="font-medium">${(item.priceAtSale * item.quantity).toFixed(2)}</span>
+                                            <span className="font-medium">₦{(item.priceAtSale * item.quantity).toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>

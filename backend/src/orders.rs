@@ -16,6 +16,8 @@ use std::str::FromStr;
 pub struct CreateOrderRequest {
     pub merchant_id: String,
     pub customer_email: String,
+    pub delivery_location: Option<String>,
+    pub payment_reference: Option<String>,
     pub items: Vec<CreateOrderItemRequest>,
 }
 
@@ -44,12 +46,15 @@ pub async fn create_order(
     let total_amount: f64 = payload.items.iter().map(|item| item.price_at_sale * item.quantity as f64).sum();
 
     sqlx::query!(
-        r#"INSERT INTO "Order" (id, merchantId, customerEmail, totalAmount, status) VALUES (?, ?, ?, ?, ?)"#,
+        r#"INSERT INTO "Order" (id, merchantId, customerEmail, deliveryLocation, totalAmount, status, paymentStatus, paymentReference) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"#,
         order_id,
         payload.merchant_id,
         payload.customer_email,
+        payload.delivery_location,
         total_amount,
-        "PENDING"
+        "PENDING",
+        "PAID", // Assuming paid since they provided a reference
+        payload.payment_reference
     )
     .execute(&mut *tx)
     .await
@@ -80,7 +85,7 @@ pub async fn get_merchant_orders(
     Path(merchant_id): Path<String>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let orders: Vec<Order> = sqlx::query(
-        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", totalAmount as "total_amount", status, createdAt as "created_at" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#
+        r#"SELECT id, merchantId as "merchant_id", customerEmail as "customer_email", deliveryLocation as "delivery_location", totalAmount as "total_amount", status, paymentStatus as "payment_status", paymentReference as "payment_reference", createdAt as "created_at" FROM "Order" WHERE merchantId = ? ORDER BY createdAt DESC"#
     )
     .bind(merchant_id)
     .fetch_all(&pool)
@@ -91,8 +96,11 @@ pub async fn get_merchant_orders(
         id: row.get("id"),
         merchant_id: row.get("merchant_id"),
         customer_email: row.get("customer_email"),
+        delivery_location: row.get("delivery_location"),
         total_amount: row.get("total_amount"),
         status: row.get("status"),
+        payment_status: row.get("payment_status"),
+        payment_reference: row.get("payment_reference"),
         created_at: row.get("created_at"),
     })
     .collect();

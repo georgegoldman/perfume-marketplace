@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '@/components/CartContext';
+import { usePaystackPayment } from 'react-paystack';
 import { apiFetch } from '@/lib/api-client';
 
 export default function CheckoutPage() {
     const { cartItems, cartTotal, clearCart } = useCart();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
+    const [deliveryLocation, setDeliveryLocation] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
@@ -25,11 +27,18 @@ export default function CheckoutPage() {
         );
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setError('');
+    const config = {
+        reference: (new Date()).getTime().toString(),
+        email: email,
+        amount: Math.round(cartTotal * 100), // Base * 100 for kobo
+        publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
+        currency: 'NGN',
+    };
 
+    const initializePayment = usePaystackPayment(config);
+
+    const onPaymentSuccess = async (reference: any) => {
+        setIsSubmitting(true);
         try {
             // Group items by merchantId
             const merchantGroups = cartItems.reduce((acc, item) => {
@@ -50,6 +59,8 @@ export default function CheckoutPage() {
                     body: JSON.stringify({
                         merchantId,
                         customerEmail: email,
+                        deliveryLocation: deliveryLocation,
+                        payment_reference: reference.reference,
                         items
                     })
                 });
@@ -58,13 +69,30 @@ export default function CheckoutPage() {
             await Promise.all(orderPromises);
 
             clearCart();
-            router.push('/order-success');
+            router.push('/checkout/success');
         } catch (err: any) {
             console.error('Checkout error:', err);
             setError(err.message || 'Failed to process order. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const onPaymentClose = () => {
+        setError('The transaction was terminated by the curator.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY) {
+            setError('Payment gateway not configured. Please add your Paystack Public Key.');
+            return;
+        }
+
+        // @ts-ignore
+        initializePayment(onPaymentSuccess, onPaymentClose);
     };
 
     return (
@@ -116,6 +144,16 @@ export default function CheckoutPage() {
                                             className="w-full bg-transparent border-b border-[var(--border)] py-4 text-lg font-light outline-none focus:border-[var(--text-primary)] transition-colors placeholder:text-[var(--border)]"
                                         />
                                     </div>
+                                    <div className="space-y-4">
+                                        <label className="uppercase text-[0.55rem] font-black text-[var(--text-secondary)] tracking-[0.2em] block">Delivery Location</label>
+                                        <textarea
+                                            required
+                                            value={deliveryLocation}
+                                            onChange={(e) => setDeliveryLocation(e.target.value)}
+                                            placeholder="123 Fragrance Lane, Scent City..."
+                                            className="w-full bg-transparent border-b border-[var(--border)] py-4 text-lg font-light outline-none focus:border-[var(--text-primary)] transition-colors placeholder:text-[var(--border)] min-h-[100px] resize-none"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="pt-10">
@@ -140,14 +178,14 @@ export default function CheckoutPage() {
                                             <p className="font-playfair text-lg text-[var(--text-primary)] leading-tight mb-1">{item.product.name}</p>
                                             <p className="text-[var(--text-secondary)] text-[0.6rem] uppercase tracking-widest font-black">QTY: {item.quantity}</p>
                                         </div>
-                                        <p className="text-[var(--text-primary)] font-medium tracking-tighter">${(item.product.basePrice * item.quantity).toFixed(2)}</p>
+                                        <p className="text-[var(--text-primary)] font-medium tracking-tighter">₦{(item.product.basePrice * item.quantity).toLocaleString()}</p>
                                     </div>
                                 ))}
                             </div>
                             <div className="pt-8 border-t border-[var(--border)]">
                                 <div className="flex justify-between items-end mb-4">
                                     <span className="uppercase text-[0.55rem] font-black text-[var(--text-secondary)] tracking-[0.2em]">Subtotal</span>
-                                    <span className="text-[var(--text-primary)] font-medium tracking-tighter">${cartTotal.toFixed(2)}</span>
+                                    <span className="text-[var(--text-primary)] font-medium tracking-tighter">₦{cartTotal.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-end mb-8">
                                     <span className="uppercase text-[0.55rem] font-black text-[var(--text-secondary)] tracking-[0.2em]">Shipping</span>
@@ -155,7 +193,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between items-end">
                                     <span className="uppercase text-[0.7rem] font-black text-[var(--text-primary)] tracking-[0.3em]">Total</span>
-                                    <span className="font-playfair text-4xl text-[var(--text-primary)] tracking-tighter">${cartTotal.toFixed(2)}</span>
+                                    <span className="font-playfair text-4xl text-[var(--text-primary)] tracking-tighter">₦{cartTotal.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>

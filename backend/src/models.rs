@@ -16,6 +16,7 @@ pub struct Merchant {
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, Clone, Copy, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[sqlx(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ProductType {
     Perfume,
@@ -67,8 +68,11 @@ pub struct Order {
     pub id: String,
     pub merchant_id: String,
     pub customer_email: String,
+    pub delivery_location: Option<String>,
     pub total_amount: f64,
     pub status: String,
+    pub payment_status: String,
+    pub payment_reference: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 

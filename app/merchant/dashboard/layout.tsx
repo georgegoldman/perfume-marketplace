@@ -41,6 +41,7 @@ export default function DashboardLayout({
         { name: 'Overview', path: '/merchant/dashboard', icon: '📊' },
         { name: 'Inventory', path: '/merchant/dashboard/inventory', icon: '💎' },
         { name: 'Orders', path: '/merchant/dashboard/orders', icon: '🛍️' },
+        { name: 'Reports', path: '/merchant/dashboard/reports', icon: '📈' },
         { name: 'Settings', path: '/merchant/dashboard/settings', icon: '⚙️' },
     ];
 
@@ -63,8 +64,8 @@ export default function DashboardLayout({
                                 key={item.path}
                                 href={item.path}
                                 className={`flex items-center gap-4 px-6 py-4 uppercase text-[0.65rem] font-black tracking-widest no-underline transition-all duration-200 border-l-2 ${pathname === item.path
-                                        ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--text-primary)]'
-                                        : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]/50'
+                                    ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border-[var(--text-primary)]'
+                                    : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]/50'
                                     }`}
                             >
                                 <span className="text-lg">{item.icon}</span>
