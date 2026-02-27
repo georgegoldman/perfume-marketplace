@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::{SqlitePool, Row};
 use crate::models::{Product, ProductType, InventoryItem};
 use uuid::Uuid;
-use std::str::FromStr;
+
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
