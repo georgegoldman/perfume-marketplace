@@ -1,0 +1,1 @@
+- I want to send verification code to merchants whatsapp using from my rust backend
