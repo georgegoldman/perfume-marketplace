@@ -1,1 +1,3 @@
 - I want to send verification code to merchants whatsapp using from my rust backend
+- need to also deploy the backend as well
+- i need to also add mongodb to the backend and remove the current active db.
