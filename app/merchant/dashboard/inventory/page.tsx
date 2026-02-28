@@ -9,6 +9,8 @@ export default function InventoryPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingProductId, setEditingProductId] = useState<string | null>(null);
     const [newProduct, setNewProduct] = useState({
         name: '',
         description: '',
@@ -46,28 +48,68 @@ export default function InventoryPage() {
         }
     };
 
-    const handleCreateProduct = async (e: React.FormEvent) => {
+    const handleSaveProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
         try {
-            await apiFetch('/api/products', {
-                method: 'POST',
-                body: JSON.stringify({
-                    ...newProduct,
-                    basePrice: parseFloat(newProduct.basePrice),
-                    stockLevel: parseInt(newProduct.stockLevel),
-                    merchantId: merchant?.id,
-                    imageUrl: newProduct.imageUrl || null
-                }),
-            });
+            const body = {
+                ...newProduct,
+                basePrice: parseFloat(newProduct.basePrice),
+                stockLevel: parseInt(newProduct.stockLevel),
+                merchantId: merchant?.id,
+                imageUrl: newProduct.imageUrl || null,
+                type: newProduct.productType // Ensure 'type' is sent for the API
+            };
+
+            if (isEditing && editingProductId) {
+                await apiFetch(`/api/products/${editingProductId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(body),
+                });
+            } else {
+                await apiFetch('/api/products', {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                });
+            }
 
             setShowAddModal(false);
+            setIsEditing(false);
+            setEditingProductId(null);
             setNewProduct({ name: '', description: '', productType: 'PERFUME', basePrice: '', sku: '', stockLevel: '', imageUrl: '' });
             if (merchant) fetchProducts(merchant.id);
         } catch (err: any) {
             setError(err.message || 'An error occurred');
         }
+    };
+
+    const handleDeleteProduct = async (productId: string) => {
+        if (!confirm('Are you certain you wish to remove this treasure from the archive?')) return;
+
+        try {
+            await apiFetch(`/api/products/${productId}`, {
+                method: 'DELETE',
+            });
+            if (merchant) fetchProducts(merchant.id);
+        } catch (err: any) {
+            alert(err.message || 'Failed to delete product');
+        }
+    };
+
+    const openEditModal = (product: Product) => {
+        setIsEditing(true);
+        setEditingProductId(product.id);
+        setNewProduct({
+            name: product.name,
+            description: product.description || '',
+            productType: product.type,
+            basePrice: product.basePrice.toString(),
+            sku: product.items?.[0]?.sku || '',
+            stockLevel: (product.items?.[0]?.stockLevel || 0).toString(),
+            imageUrl: product.imageUrl || '',
+        });
+        setShowAddModal(true);
     };
 
     return (
@@ -79,7 +121,12 @@ export default function InventoryPage() {
                 </div>
                 <button
                     className="px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.65rem] font-bold tracking-[0.2em] hover:opacity-90 transition-all shadow-lg"
-                    onClick={() => setShowAddModal(true)}
+                    onClick={() => {
+                        setIsEditing(false);
+                        setEditingProductId(null);
+                        setNewProduct({ name: '', description: '', productType: 'PERFUME', basePrice: '', sku: '', stockLevel: '', imageUrl: '' });
+                        setShowAddModal(true);
+                    }}
                 >
                     + New Essence
                 </button>
@@ -143,8 +190,18 @@ export default function InventoryPage() {
                                         </td>
                                         <td className="p-6 text-right">
                                             <div className="flex justify-end gap-6">
-                                                <button className="uppercase text-[0.6rem] font-black tracking-widest text-[var(--text-primary)] hover:opacity-100 opacity-40 transition-opacity">Edit</button>
-                                                <button className="uppercase text-[0.6rem] font-black tracking-widest text-red-500 hover:opacity-100 opacity-40 transition-opacity">Delete</button>
+                                                <button
+                                                    onClick={() => openEditModal(product)}
+                                                    className="uppercase text-[0.6rem] font-black tracking-widest text-[var(--text-primary)] hover:opacity-100 opacity-40 transition-opacity"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                    className="uppercase text-[0.6rem] font-black tracking-widest text-red-500 hover:opacity-100 opacity-40 transition-opacity"
+                                                >
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -155,9 +212,18 @@ export default function InventoryPage() {
                 </div>
             </div>
 
-            {/* Add Product Modal */}
+            {/* Add/Edit Product Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[2000] flex justify-center items-center p-6 overflow-y-auto">
+                <div
+                    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[2000] flex justify-center items-center p-6 overflow-y-auto"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowAddModal(false);
+                            setIsEditing(false);
+                            setEditingProductId(null);
+                        }
+                    }}
+                >
                     <div className="w-full max-w-xl bg-[var(--bg-primary)] border border-[var(--border)] shadow-2xl relative p-10 md:p-14 animate-in fade-in zoom-in duration-300">
                         <button
                             onClick={() => setShowAddModal(false)}
@@ -167,8 +233,8 @@ export default function InventoryPage() {
                         </button>
 
                         <header className="text-center mb-12">
-                            <span className="uppercase text-[0.6rem] text-mute font-black tracking-[0.4em] mb-4 block">Archive Addition</span>
-                            <h3 className="serif text-4xl font-normal text-[var(--text-primary)]">New Essence</h3>
+                            <span className="uppercase text-[0.6rem] text-mute font-black tracking-[0.4em] mb-4 block">{isEditing ? 'Archive Amendment' : 'Archive Addition'}</span>
+                            <h3 className="serif text-4xl font-normal text-[var(--text-primary)]">{isEditing ? 'Refine Essence' : 'New Essence'}</h3>
                         </header>
 
                         {error && (
@@ -177,7 +243,7 @@ export default function InventoryPage() {
                             </div>
                         )}
 
-                        <form onSubmit={handleCreateProduct} className="space-y-8">
+                        <form onSubmit={handleSaveProduct} className="space-y-8">
                             <div className="space-y-2">
                                 <label className="uppercase text-[0.55rem] font-black text-mute tracking-[0.2em]">Product Name</label>
                                 <input
@@ -261,7 +327,7 @@ export default function InventoryPage() {
                                     <select
                                         className="w-full bg-[var(--bg-primary)] border-b border-[var(--border)] py-3 text-sm font-light outline-none focus:border-[var(--text-primary)] transition-colors appearance-none cursor-pointer"
                                         value={newProduct.productType}
-                                        onChange={(e) => setNewProduct({ ...newProduct, productType: e.target.value })}
+                                        onChange={(e) => setNewProduct({ ...newProduct, productType: e.target.value as any })}
                                     >
                                         <option value="PERFUME">Fine Parfum</option>
                                         <option value="OIL_PERFUME">Botanical Oil</option>
@@ -308,7 +374,7 @@ export default function InventoryPage() {
                                     type="submit"
                                     className="w-full py-5 bg-[var(--text-primary)] text-[var(--bg-primary)] uppercase text-[0.7rem] font-black tracking-[0.3em] hover:opacity-90 transition-all shadow-xl"
                                 >
-                                    Complete Addition
+                                    {isEditing ? 'Finalize Amendment' : 'Complete Addition'}
                                 </button>
                             </div>
                         </form>
@@ -318,3 +384,4 @@ export default function InventoryPage() {
         </div>
     );
 }
+
